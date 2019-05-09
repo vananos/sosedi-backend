@@ -2,17 +2,13 @@ buildscript {
     repositories {
         mavenCentral()
     }
-    dependencies {
-        classpath("org.springframework.boot:spring-boot-gradle-plugin:2.0.5.RELEASE")
-    }
 }
 
 plugins {
     id 'java'
+    id "org.springframework.boot" version "2.1.4.RELEASE"
+    id "io.spring.dependency-management" version "1.0.7.RELEASE"
 }
-
-apply plugin: 'io.spring.dependency-management'
-
 
 group 'io.github.vananos'
 version '1.0-SNAPSHOT'
@@ -24,6 +20,9 @@ repositories {
 }
 
 dependencies {
-    compile("org.springframework.boot:spring-boot-starter-web")
+    compile "org.springframework.boot:spring-boot-starter-web"
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    
+    compileOnly 'org.projectlombok:lombok:1.18.8'
+    annotationProcessor 'org.projectlombok:lombok:1.18.8'
 }
