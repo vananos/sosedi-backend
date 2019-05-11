@@ -1,4 +1,4 @@
-package io.github.vananos.sosedi.models.register;
+package io.github.vananos.sosedi.models.registration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.vananos.sosedi.models.validation.ValidPassword;

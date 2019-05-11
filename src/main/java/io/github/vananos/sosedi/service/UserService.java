@@ -1,7 +1,8 @@
 package io.github.vananos.sosedi.service;
 
-import org.springframework.stereotype.Service;
+import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
+import io.github.vananos.sosedi.models.User;
 
-@Service
-public class UserService {
+public interface UserService {
+    void registerUser(User user) throws UserAlreadyExists;
 }
