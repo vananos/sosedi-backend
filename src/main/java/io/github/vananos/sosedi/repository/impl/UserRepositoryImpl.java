@@ -1,11 +1,14 @@
 package io.github.vananos.sosedi.repository.impl;
 
+import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.repository.UserRepository;
-import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import static io.github.vananos.sosedi.models.User.SELECT_USER_BY_EMAIL;
 
@@ -13,25 +16,23 @@ import static io.github.vananos.sosedi.models.User.SELECT_USER_BY_EMAIL;
 @Transactional
 public class UserRepositoryImpl implements UserRepository {
 
-    private SessionFactory sessionFactory;
-
-    @Autowired
-    public UserRepositoryImpl(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Override
     @Transactional(readOnly = true)
-    @SuppressWarnings("uncheked")
     public User getUserByEmail(String email) {
-        return (User) sessionFactory.getCurrentSession()
-                .getNamedQuery(SELECT_USER_BY_EMAIL)
+        return entityManager.createNamedQuery(SELECT_USER_BY_EMAIL, User.class)
                 .setParameter("email", email)
-                .uniqueResult();
+                .getSingleResult();
     }
 
     @Override
     public void addUser(User user) {
-        sessionFactory.getCurrentSession().save(user);
+        try {
+            entityManager.persist(user);
+        } catch (DataIntegrityViolationException e) {
+            throw new UserAlreadyExists();
+        }
     }
 }

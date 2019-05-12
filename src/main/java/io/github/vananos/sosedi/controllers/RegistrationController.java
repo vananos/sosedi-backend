@@ -4,8 +4,8 @@ import io.github.vananos.sosedi.components.converters.RegistrationRequestToUserC
 import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
 import io.github.vananos.sosedi.models.BaseResponse;
 import io.github.vananos.sosedi.models.User;
-import io.github.vananos.sosedi.models.registration.RegistrationResponse;
 import io.github.vananos.sosedi.models.registration.RegistrationRequest;
+import io.github.vananos.sosedi.models.registration.RegistrationResponse;
 import io.github.vananos.sosedi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 
 @RestController
 public class RegistrationController {
+    public static final String USER_ALREADY_EXISTS = "user already exists";
 
     private RegistrationRequestToUserConverter registrationRequestToUserConverter;
     private UserService userService;
@@ -51,10 +52,14 @@ public class RegistrationController {
         User user = registrationRequestToUserConverter.convert(registrationRequest);
         try {
             userService.registerUser(user);
-        } catch (UserAlreadyExists userAlreadyExists) {
-            userAlreadyExists.printStackTrace();
+        } catch (UserAlreadyExists e) {
+            RegistrationResponse response = new RegistrationResponse();
+            response.setResult(BaseResponse.ResultStatus.FAIL);
+            response.setErrors(USER_ALREADY_EXISTS);
+            return ResponseEntity.status(HttpStatus.OK).body(response);
         }
-
-        return null;
+        RegistrationResponse response = new RegistrationResponse();
+        response.setResult(BaseResponse.ResultStatus.SUCCESS);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 }

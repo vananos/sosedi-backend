@@ -1,6 +1,5 @@
 package io.github.vananos.sosedi.service.impl;
 
-import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.repository.UserRepository;
 import io.github.vananos.sosedi.service.UserService;
@@ -19,7 +18,7 @@ public class UserServiceImpl implements UserService {
 
 
     @Override
-    public void registerUser(User user) throws UserAlreadyExists {
+    public void registerUser(User user) {
         userRepository.addUser(user);
     }
 }
