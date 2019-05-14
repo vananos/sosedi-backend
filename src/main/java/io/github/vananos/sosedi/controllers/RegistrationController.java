@@ -5,7 +5,6 @@ import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
 import io.github.vananos.sosedi.models.BaseResponse;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.registration.RegistrationRequest;
-import io.github.vananos.sosedi.models.registration.RegistrationResponse;
 import io.github.vananos.sosedi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -32,14 +31,14 @@ public class RegistrationController {
     }
 
     @PostMapping("/register")
-    public RegistrationResponse register(
+    public BaseResponse register(
             @RequestBody @Valid RegistrationRequest registrationRequest,
             BindingResult bindingResult
     )
     {
         if (bindingResult.hasErrors()) {
-            RegistrationResponse response = new RegistrationResponse();
-            response.setResult(BaseResponse.ResultStatus.FAIL);
+            BaseResponse response = new BaseResponse();
+            response.setStatus(BaseResponse.ResultStatus.FAIL);
 
             Map<String, String> errors = bindingResult.getFieldErrors().stream()
                     .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
@@ -51,13 +50,13 @@ public class RegistrationController {
         try {
             userService.registerUser(user);
         } catch (UserAlreadyExists e) {
-            RegistrationResponse response = new RegistrationResponse();
-            response.setResult(BaseResponse.ResultStatus.FAIL);
+            BaseResponse response = new BaseResponse();
+            response.setStatus(BaseResponse.ResultStatus.FAIL);
             response.setErrors(USER_ALREADY_EXISTS);
             return response;
         }
-        RegistrationResponse response = new RegistrationResponse();
-        response.setResult(BaseResponse.ResultStatus.SUCCESS);
+        BaseResponse response = new BaseResponse();
+        response.setStatus(BaseResponse.ResultStatus.SUCCESS);
         return response;
     }
 }

@@ -3,12 +3,14 @@ package io.github.vananos.sosedi.models.registration;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.vananos.sosedi.models.validation.ValidPassword;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Data
+@Accessors(fluent = true)
 public class RegistrationRequest {
     public static final int NAME_MIN_LENGTH = 2;
     public static final int NAME_MAX_LENGTH = 15;

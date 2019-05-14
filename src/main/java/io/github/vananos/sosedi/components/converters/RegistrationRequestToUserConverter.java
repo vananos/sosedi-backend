@@ -10,10 +10,10 @@ public class RegistrationRequestToUserConverter implements Converter<Registratio
     @Override
     public User convert(RegistrationRequest source) {
         User user = new User();
-        user.setEmail(source.getEmail());
-        user.setName(source.getName());
-        user.setSurname(source.getSurname());
-        user.setPassword(source.getPassword());
+        user.setEmail(source.email());
+        user.setName(source.name());
+        user.setSurname(source.surname());
+        user.setPassword(source.password());
         return user;
     }
 }
