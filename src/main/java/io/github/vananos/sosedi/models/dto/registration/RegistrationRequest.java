@@ -1,16 +1,18 @@
-package io.github.vananos.sosedi.models.registration;
+package io.github.vananos.sosedi.models.dto.registration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.github.vananos.sosedi.models.validation.ValidPassword;
+import io.github.vananos.sosedi.components.validation.FieldsValueMatch;
+import io.github.vananos.sosedi.components.validation.ValidPassword;
 import lombok.Data;
-import lombok.experimental.Accessors;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import static io.github.vananos.sosedi.controllers.RegistrationController.PASSWORD_CONFIRMATION_MUST_MATCH;
+
 @Data
-@Accessors(fluent = true)
+@FieldsValueMatch(field = "passwordConfirmation", fieldMatch = "password", message = PASSWORD_CONFIRMATION_MUST_MATCH)
 public class RegistrationRequest {
     public static final int NAME_MIN_LENGTH = 2;
     public static final int NAME_MAX_LENGTH = 15;
@@ -35,7 +37,5 @@ public class RegistrationRequest {
     @ValidPassword
     private String password;
 
-    @JsonProperty("passwordConfirmation")
-    @ValidPassword
     private String passwordConfirmation;
 }

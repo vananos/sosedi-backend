@@ -1,7 +1,7 @@
 package io.github.vananos.sosedi.components.converters;
 
 import io.github.vananos.sosedi.models.User;
-import io.github.vananos.sosedi.models.registration.RegistrationRequest;
+import io.github.vananos.sosedi.models.dto.registration.RegistrationRequest;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
@@ -10,10 +10,10 @@ public class RegistrationRequestToUserConverter implements Converter<Registratio
     @Override
     public User convert(RegistrationRequest source) {
         User user = new User();
-        user.setEmail(source.email());
-        user.setName(source.name());
-        user.setSurname(source.surname());
-        user.setPassword(source.password());
+        user.setEmail(source.getEmail());
+        user.setName(source.getName());
+        user.setSurname(source.getSurname());
+        user.setPassword(source.getPassword());
         return user;
     }
 }

@@ -1,4 +1,4 @@
-package io.github.vananos.sosedi.models.validation;
+package io.github.vananos.sosedi.components.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
