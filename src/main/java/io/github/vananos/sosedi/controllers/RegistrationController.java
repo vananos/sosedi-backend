@@ -8,8 +8,6 @@ import io.github.vananos.sosedi.models.registration.RegistrationRequest;
 import io.github.vananos.sosedi.models.registration.RegistrationResponse;
 import io.github.vananos.sosedi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,7 +32,7 @@ public class RegistrationController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegistrationResponse> register(
+    public RegistrationResponse register(
             @RequestBody @Valid RegistrationRequest registrationRequest,
             BindingResult bindingResult
     )
@@ -47,7 +45,7 @@ public class RegistrationController {
                     .collect(Collectors.toMap(FieldError::getField, FieldError::getDefaultMessage));
             response.setErrors(errors);
 
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+            return response;
         }
         User user = registrationRequestToUserConverter.convert(registrationRequest);
         try {
@@ -56,10 +54,10 @@ public class RegistrationController {
             RegistrationResponse response = new RegistrationResponse();
             response.setResult(BaseResponse.ResultStatus.FAIL);
             response.setErrors(USER_ALREADY_EXISTS);
-            return ResponseEntity.status(HttpStatus.OK).body(response);
+            return response;
         }
         RegistrationResponse response = new RegistrationResponse();
         response.setResult(BaseResponse.ResultStatus.SUCCESS);
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return response;
     }
 }
