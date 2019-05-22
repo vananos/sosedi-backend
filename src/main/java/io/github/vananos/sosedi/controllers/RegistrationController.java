@@ -8,7 +8,9 @@ import io.github.vananos.sosedi.models.dto.registration.Error;
 import io.github.vananos.sosedi.models.dto.registration.RegistrationRequest;
 import io.github.vananos.sosedi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -33,12 +35,19 @@ public class RegistrationController {
         this.registrationRequestToUserConverter = registrationRequestToUserConverter;
     }
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/register")
-    public BaseResponse register(
+    public ResponseEntity<BaseResponse> register(
             @RequestBody @Valid RegistrationRequest registrationRequest,
             BindingResult bindingResult
     )
     {
+        try {
+            Thread.sleep(1500);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         if (bindingResult.hasErrors()) {
             BaseResponse response = new BaseResponse();
             response.setStatus(BaseResponse.ResultStatus.FAIL);
@@ -51,8 +60,7 @@ public class RegistrationController {
                     .collect(toList()));
 
             response.setErrors(errors);
-
-            return response;
+            return ResponseEntity.badRequest().body(response);
         }
         User user = registrationRequestToUserConverter.convert(registrationRequest);
         try {
@@ -61,10 +69,10 @@ public class RegistrationController {
             BaseResponse response = new BaseResponse();
             response.setStatus(BaseResponse.ResultStatus.FAIL);
             response.setErrors(Collections.singletonList(new Error().description(USER_ALREADY_EXISTS)));
-            return response;
+            return ResponseEntity.badRequest().body(response);
         }
         BaseResponse response = new BaseResponse();
         response.setStatus(BaseResponse.ResultStatus.SUCCESS);
-        return response;
+        return ResponseEntity.ok(response);
     }
 }
