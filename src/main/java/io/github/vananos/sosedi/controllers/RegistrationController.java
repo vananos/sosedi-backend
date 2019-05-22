@@ -35,7 +35,6 @@ public class RegistrationController {
         this.registrationRequestToUserConverter = registrationRequestToUserConverter;
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
     @PostMapping("/register")
     public ResponseEntity<BaseResponse> register(
             @RequestBody @Valid RegistrationRequest registrationRequest,
