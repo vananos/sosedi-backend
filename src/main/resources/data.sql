@@ -1,0 +1,1 @@
+INSERT INTO USERS (name, surname, email, password) VALUES ('Ваня', 'Заяц', 'van8025@yandex.ru', '$2a$10$XDSETHCoVK1ioDGctH3El.sW0WfxqWTgilKqYnEGKn2naO4tcYZha');

@@ -1,15 +1,14 @@
 package io.github.vananos.sosedi.service.impl;
 
 import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
+import io.github.vananos.sosedi.exceptions.UserNotFoundException;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.repository.UserRepository;
 import io.github.vananos.sosedi.service.UserService;
-import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import javax.persistence.PersistenceException;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -29,12 +28,29 @@ public class UserServiceImpl implements UserService {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             userRepository.save(user);
-        } catch (PersistenceException e) {
-            //TODO: should be more clear way to handle it
-            if (e.getCause() instanceof ConstraintViolationException) {
-                throw new UserAlreadyExists();
-            }
-            throw e;
+        } catch (DataIntegrityViolationException e) {
+            throw new UserAlreadyExists();
         }
+    }
+
+
+    @Override
+    public User updateUserInfo(User newUser) {
+        User oldUser = findUserById(newUser.getId());
+
+        oldUser.setInterests(newUser.getInterests());
+        oldUser.setUserStatus(newUser.getUserStatus());
+        oldUser.setName(newUser.getName());
+        oldUser.setSurname(newUser.getSurname());
+        oldUser.setBirthday(newUser.getBirthday());
+        oldUser.setPhone(newUser.getPhone());
+        oldUser.setDescription(newUser.getDescription());
+
+        return userRepository.save(oldUser);
+    }
+
+    @Override
+    public User findUserById(Long id) {
+        return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 }

@@ -4,4 +4,8 @@ import io.github.vananos.sosedi.models.User;
 
 public interface UserService {
     void registerUser(User user);
+
+    User updateUserInfo(User user);
+
+    User findUserById(Long id);
 }

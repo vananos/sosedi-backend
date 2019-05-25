@@ -1,9 +1,7 @@
-package io.github.vananos.sosedi.controllers.registration;
+package io.github.vananos.sosedi.controllers;
 
-import io.github.vananos.sosedi.controllers.RegistrationController;
 import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
 import io.github.vananos.sosedi.models.User;
-import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
 import io.github.vananos.sosedi.models.dto.registration.RegistrationRequest;
 import io.github.vananos.sosedi.service.UserService;
 import org.junit.jupiter.api.Test;
@@ -13,7 +11,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Matchers;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -33,7 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @ExtendWith(SpringExtension.class)
-@WebMvcTest(RegistrationController.class)
+@SpringBootTest
+@AutoConfigureMockMvc
 public class RegistrationControllerTest {
     private static final String REGISTRATION_ENDPOINT = "/register";
 
@@ -53,9 +53,7 @@ public class RegistrationControllerTest {
         mvc.perform(
                 registrationPost()
                         .content(toJson(validUserRegistrationRequest)))
-
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(BaseResponse.ResultStatus.SUCCESS.toString())));
+                .andExpect(status().isOk());
 
         User userRegistrationInfo = new User();
         userRegistrationInfo.setName(validUserRegistrationRequest.getName());
@@ -74,8 +72,7 @@ public class RegistrationControllerTest {
                 registrationPost()
                         .content(toJson(validUserRegistrationRequest())))
 
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(BaseResponse.ResultStatus.FAIL.toString())))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0].description", is(USER_ALREADY_EXISTS)));
     }
 
@@ -86,8 +83,7 @@ public class RegistrationControllerTest {
                 registrationPost()
                         .content(toJson(registrationRequest)))
 
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(BaseResponse.ResultStatus.FAIL.toString())))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0].id", is(errorId)));
 
         verify(userService, never()).registerUser(any());
@@ -112,7 +108,7 @@ public class RegistrationControllerTest {
                 Arguments.of(withInvalidSurname, "surname"),
                 Arguments.of(withInvalidEmail, "email"),
                 Arguments.of(withWeakPassword, "password")
-        );
+                        );
     }
 
     @Test
@@ -124,8 +120,7 @@ public class RegistrationControllerTest {
                 registrationPost()
                         .content(toJson(registrationRequest)))
 
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", is(BaseResponse.ResultStatus.FAIL.toString())))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.errors[0].description", is(PASSWORD_CONFIRMATION_MUST_MATCH)));
     }
 

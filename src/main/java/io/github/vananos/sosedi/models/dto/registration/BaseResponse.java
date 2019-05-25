@@ -2,19 +2,17 @@ package io.github.vananos.sosedi.models.dto.registration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import java.util.List;
 
 @Data
-public class BaseResponse {
-    @JsonProperty("status")
-    private ResultStatus status;
+@Accessors(fluent = true)
+public class BaseResponse<T> {
 
     @JsonProperty("errors")
     private List<Error> errors;
 
-    public enum ResultStatus {
-        SUCCESS,
-        FAIL
-    }
+    @JsonProperty("data")
+    private T data;
 }

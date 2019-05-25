@@ -20,20 +20,20 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private AuthenticationEntryPoint authenticationEntryPoint;
-    private AuthenticationSuccessHandler authenticationSuccessHandler;
     private UserDetailsService userDetailsService;
+    private AuthenticationSuccessHandler authenticationSuccessHandler;
     private SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
 
 
     @Autowired
     public SecurityConfig(
             AuthenticationEntryPoint authenticationEntryPoint,
-            AuthenticationSuccessHandler authenticationSuccessHandler,
-            UserDetailsService userDetailsService)
+            UserDetailsService userDetailsService,
+            AuthenticationSuccessHandler authenticationSuccessHandler)
     {
+        this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
-        this.userDetailsService = userDetailsService;
     }
 
     @Override
@@ -50,9 +50,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/api*").authenticated()
-                .antMatchers("/login", "/register")
+                .antMatchers("/login", "/register", "/*")
                 .permitAll()
+//                .antMatchers("/*").authenticated()
                 .and()
                 .formLogin()
                 .successHandler(authenticationSuccessHandler)
