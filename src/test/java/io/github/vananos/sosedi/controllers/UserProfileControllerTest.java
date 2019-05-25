@@ -6,6 +6,9 @@ import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
 import io.github.vananos.sosedi.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +20,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.stream.Stream;
 
 import static io.github.vananos.Utils.toJson;
 import static org.hamcrest.core.Is.is;
@@ -91,7 +95,49 @@ public class UserProfileControllerTest {
                 .andExpect(status().isNotFound());
     }
 
-    private User getValidUser() {
+    @ParameterizedTest
+    @MethodSource("provideValidationErrorsArguments")
+    public void update_validationErrors(UserProfileInfo userProfileInfo, String errorId) throws Exception {
+        mvc.perform(
+                updatePost()
+                        .content(toJson(userProfileInfo)))
+
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errors[0].id", is(errorId)));
+
+        verify(userService, never()).updateUserInfo(any());
+    }
+
+    public static Stream<Arguments> provideValidationErrorsArguments() {
+        UserProfileInfo withInvalidName = getValidUserProfileInfo();
+        withInvalidName.setName("_");
+
+        UserProfileInfo withInvalidSurname = getValidUserProfileInfo();
+        withInvalidSurname.setSurname("_");
+
+        UserProfileInfo withInvalidInterests = getValidUserProfileInfo();
+        withInvalidInterests.setInterests(null);
+
+        UserProfileInfo withoutDescription = getValidUserProfileInfo();
+        withoutDescription.setDescription(null);
+
+        UserProfileInfo withInvalidBirthday = getValidUserProfileInfo();
+        withInvalidBirthday.setBirthday(null);
+
+        UserProfileInfo withInvalidPhone = getValidUserProfileInfo();
+        withInvalidPhone.setPhone(null);
+
+        return Stream.of(
+                Arguments.of(withInvalidName, "name"),
+                Arguments.of(withInvalidSurname, "surname"),
+                Arguments.of(withInvalidInterests, "interests"),
+                Arguments.of(withoutDescription, "description"),
+                Arguments.of(withInvalidBirthday, "birthday"),
+                Arguments.of(withInvalidPhone, "phone")
+                        );
+    }
+
+    private static User getValidUser() {
         User expectedUser = new User();
         expectedUser.setId(1L);
         expectedUser.setName("testUser");
@@ -106,7 +152,7 @@ public class UserProfileControllerTest {
         return expectedUser;
     }
 
-    private UserProfileInfo getValidUserProfileInfo() {
+    private static UserProfileInfo getValidUserProfileInfo() {
         UserProfileInfo userProfileInfo = new UserProfileInfo();
         User validUser = getValidUser();
         userProfileInfo.setName(validUser.getName());
