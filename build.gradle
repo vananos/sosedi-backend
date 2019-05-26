@@ -30,7 +30,7 @@ dependencies {
     compile group: 'org.passay', name: 'passay', version: '1.0'
 
     // https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-security
-    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security', version: '2.1.4.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-security'
 
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-data-jpa'
 
@@ -45,7 +45,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
     testCompile 'org.assertj:assertj-core:3.11.1'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+    testCompile group: 'org.springframework.security', name: 'spring-security-test'
     testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.1.4.RELEASE'
     testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: '5.4.2'
-
 }

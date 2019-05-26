@@ -36,7 +36,7 @@ public class ImageController {
         try {
             image = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
             if (image == null) {
-                throw new IOException("not a file");
+                throw new IOException("not an image");
             }
         } catch (IOException e) {
             return ResponseEntity.badRequest().build();
