@@ -1,6 +1,7 @@
 package io.github.vananos.sosedi.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -14,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
+import org.springframework.web.cors.CorsConfiguration;
 
 @Configuration
 @EnableWebSecurity
@@ -24,13 +26,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationSuccessHandler authenticationSuccessHandler;
     private SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
 
+    @Value("${sosedi.cors.dev}")
+    private Boolean isCorsDev;
 
     @Autowired
     public SecurityConfig(
             AuthenticationEntryPoint authenticationEntryPoint,
             UserDetailsService userDetailsService,
-            AuthenticationSuccessHandler authenticationSuccessHandler)
-    {
+            AuthenticationSuccessHandler authenticationSuccessHandler) {
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
@@ -43,10 +46,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http.cors();
+        if (isCorsDev) {
+            http.cors();
+        } else {
+            http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
+        }
+        http.csrf().disable();
 
-        http.csrf().disable()
-                .exceptionHandling()
+        http.exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .authorizeRequests()
