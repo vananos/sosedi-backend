@@ -149,7 +149,7 @@ public class UserProfileControllerTest {
         expectedUser.setBirthday(LocalDate.of(2000, 11, 21));
         expectedUser.setDescription("About myself");
         expectedUser.setEmail("someemail@gmail.com");
-        expectedUser.setPhone("+7-(999)-222-33-44");
+        expectedUser.setPhone("+7 (999) 222 33 44");
         expectedUser.setInterests("");
         return expectedUser;
     }

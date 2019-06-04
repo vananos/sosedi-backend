@@ -1,6 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
 import io.github.vananos.sosedi.service.FileService;
+import io.github.vananos.sosedi.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,21 +37,25 @@ public class ImageControllerTest {
     @MockBean
     private FileService fileService;
 
+    @MockBean
+    private UserService userService;
+
 
     @Test
     public void postImage_acceptImage() throws Exception {
         byte[] image = Files.readAllBytes(
                 Paths.get(
                         getClass().getClassLoader().getResource("imgtest/sun.png").getPath()));
-        String expectedFileName = UUID.randomUUID().toString() + ".jpg";
+        String expectedFileName = UUID.randomUUID().toString() + ".png";
         when(fileService.saveFile(any())).thenReturn(expectedFileName);
 
 
         mvc.perform(MockMvcRequestBuilders
-                .fileUpload(IMAGE_UPLOAD_ENDPOINT).file(new MockMultipartFile("file", image)))
+                .fileUpload(IMAGE_UPLOAD_ENDPOINT).file(new MockMultipartFile("file", image)).param("userId", "1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.name", equalTo(expectedFileName)));
 
+        verify(userService, times(1)).setAvatarForUser(eq(expectedFileName), eq(1L));
         verify(fileService, times(1)).saveFile(any());
     }
 
@@ -60,7 +65,7 @@ public class ImageControllerTest {
                 Paths.get(
                         getClass().getClassLoader().getResource("imgtest/notimage.txt").getPath()));
         mvc.perform(MockMvcRequestBuilders
-                .fileUpload(IMAGE_UPLOAD_ENDPOINT).file(new MockMultipartFile("file", notImage)))
+                .fileUpload(IMAGE_UPLOAD_ENDPOINT).file(new MockMultipartFile("file", notImage)).param("userId", "1"))
                 .andExpect(status().isBadRequest());
 
         verify(fileService, times(0)).saveFile(any());

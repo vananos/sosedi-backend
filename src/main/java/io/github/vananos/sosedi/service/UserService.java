@@ -8,4 +8,6 @@ public interface UserService {
     User updateUserInfo(User user);
 
     User findUserById(Long id);
+
+    void setAvatarForUser(String avatar, Long userId);
 }

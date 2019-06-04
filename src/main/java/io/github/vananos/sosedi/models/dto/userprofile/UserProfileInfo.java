@@ -5,6 +5,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.util.List;
@@ -31,6 +32,7 @@ public class UserProfileInfo {
 
     @JsonProperty("phone")
     @NotNull
+    @Pattern(regexp = "\\+\\d \\(\\d{3}\\) \\d{3} \\d{2} \\d{2}")
     private String phone;
 
     @JsonProperty("interests")
@@ -45,4 +47,6 @@ public class UserProfileInfo {
     @JsonProperty("isNewUser")
     private Boolean isNewUser;
 
+    @JsonProperty("avatar")
+    private String avatar;
 }

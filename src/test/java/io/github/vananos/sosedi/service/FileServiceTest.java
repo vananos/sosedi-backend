@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
@@ -37,13 +36,6 @@ public class FileServiceTest {
         String fileName = saveImage();
         fileService.deleteFile(fileName);
         assertThat(new File(imageFolder + "/" + fileName)).doesNotExist();
-    }
-
-    @Test
-    public void filenameWithMultipleDots_error() throws IOException {
-        assertThrows(RuntimeException.class, () -> {
-            fileService.deleteFile("../root");
-        });
     }
 
     private String saveImage() throws IOException {

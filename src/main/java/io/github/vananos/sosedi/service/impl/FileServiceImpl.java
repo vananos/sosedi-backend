@@ -31,7 +31,7 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public String saveFile(BufferedImage image) {
-        String fileName = UUID.randomUUID().toString() + ".jpg";
+        String fileName = UUID.randomUUID().toString() + ".png";
         File outputFile = folderPath.resolve(fileName).toFile();
 
         if (outputFile.exists()) {
@@ -39,7 +39,7 @@ public class FileServiceImpl implements FileService {
         }
 
         try {
-            ImageIO.write(image, "jpg", outputFile);
+            ImageIO.write(image, "png", outputFile);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -57,15 +57,12 @@ public class FileServiceImpl implements FileService {
     }
 
     private void checkFileName(String name) {
-        int extensionIndex = name.lastIndexOf(".");
-        if (extensionIndex == -1) {
+        if (name.lastIndexOf(".") == -1) {
             throw new RuntimeException("filename must contain extension: " + name);
         }
-        String baseName = name.substring(0, extensionIndex);
-        if (baseName.contains(".")) {
-            throw new RuntimeException("basename must not contain dots: " + name);
-        }
-        File file = folderPath.resolve(name).toFile();
+        String baseName = new File(name).getName(); // prevent ../
+
+        File file = folderPath.resolve(baseName).toFile();
 
         if (!file.exists()) {
             throw new RuntimeException("file does not exist: " + name);

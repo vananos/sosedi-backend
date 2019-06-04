@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 @Component
@@ -42,9 +42,12 @@ public class AuthenticationSuccessHandlerImpl extends SimpleUrlAuthenticationSuc
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userDetails.getUser();
-        Map<String, Long> userIdMap = Collections.singletonMap("userId", user.getId());
+        Map<String, Object> responseObj = new HashMap<>();
+        responseObj.put("userId", user.getId());
+        responseObj.put("isNewUser", user.getUserStatus() != User.UserStatus.PROFILE_FILLED);
+
         PrintWriter printWriter = response.getWriter();
-        printWriter.print(objectMapper.writeValueAsString(userIdMap));
+        printWriter.print(objectMapper.writeValueAsString(responseObj));
 
         if (savedRequest == null) {
             clearAuthenticationAttributes(request);

@@ -53,4 +53,9 @@ public class UserServiceImpl implements UserService {
     public User findUserById(Long id) {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
+
+    @Override
+    public void setAvatarForUser(String avatar, Long userId) {
+        userRepository.updateAvatarForUser(avatar, userId);
+    }
 }

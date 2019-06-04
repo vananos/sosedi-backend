@@ -14,8 +14,12 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static java.util.Arrays.asList;
+import static java.util.Objects.isNull;
 
 @RestController
 @Slf4j
@@ -36,6 +40,11 @@ public class UserProfileController {
         user = userService.findUserById(userId);
 
         UserProfileInfo userProfileInfo = new ModelMapper().map(user, UserProfileInfo.class);
+
+        userProfileInfo.setInterests(
+                isNull(user.getInterests()) ?
+                        Collections.emptyList() :
+                        asList(user.getInterests().split(",")));
 
         userProfileInfo.setIsNewUser(user.getUserStatus() != User.UserStatus.PROFILE_FILLED);
 
