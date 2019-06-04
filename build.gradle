@@ -8,6 +8,8 @@ plugins {
     id 'java'
     id "org.springframework.boot" version "2.1.4.RELEASE"
     id "io.spring.dependency-management" version "1.0.7.RELEASE"
+    id 'java-library'
+    id 'maven-publish'
 }
 
 group 'io.github.vananos'
@@ -20,6 +22,8 @@ repositories {
 }
 
 test {
+    systemProperty "spring.datasource.username", project.getProperty("spring.datasource.username")
+    systemProperty "spring.datasource.password", project.getProperty("spring.datasource.password")
     useJUnitPlatform()
 }
 
