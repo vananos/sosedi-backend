@@ -16,6 +16,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDate;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -65,12 +66,29 @@ public class UserServiceTest {
     }
 
     @Test
-    public void updateUnexistingUser_userNotFoundError() {
+    public void updateUnExistingUser_userNotFoundError() {
         when(userRepository.findById(any())).thenReturn(Optional.empty());
 
         assertThrows(UserNotFoundException.class, () -> {
             userService.updateUserInfo(getValidUser());
         });
+    }
+
+    @Test
+    public void confirmEmailExistingCode_success() {
+        User expectedUser = new User();
+        expectedUser.setName("test");
+        when(userRepository.findByEmailConfirmationId("confirmationCode")).thenReturn(Optional.of(expectedUser));
+        Optional<User> resultUser = userService.confirmEmail("confirmationCode");
+        assertThat(resultUser)
+                .isNotEmpty()
+                .get();
+
+
+        assertThat(expectedUser.getUserStatus()).isEqualTo(User.UserStatus.EMAIL_CONFIRMED);
+
+        verify(userRepository, times(1)).save(eq(expectedUser));
+
     }
 
     private User getValidUser() {
