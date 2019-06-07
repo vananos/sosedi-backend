@@ -10,6 +10,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -57,5 +59,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setAvatarForUser(String avatar, Long userId) {
         userRepository.updateAvatarForUser(avatar, userId);
+    }
+
+    @Override
+    public Optional<User> confirmEmail(String confirmationId) {
+        Optional<User> user = userRepository.findByEmailConfirmationId(confirmationId);
+        if (user.isPresent()) {
+            user.get().setUserStatus(User.UserStatus.EMAIL_CONFIRMED);
+            userRepository.save(user.get());
+        }
+
+        return user;
     }
 }

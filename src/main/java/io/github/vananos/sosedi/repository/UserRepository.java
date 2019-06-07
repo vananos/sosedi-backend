@@ -8,6 +8,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -18,4 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Transactional
     @Query("update User set avatar = :avatar where id = :userId")
     void updateAvatarForUser(@Param("avatar") String avatar, @Param("userId") Long userId);
+
+    Optional<User> findByEmailConfirmationId(String confirmationId);
 }
