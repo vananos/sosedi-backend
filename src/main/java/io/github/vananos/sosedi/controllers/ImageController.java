@@ -6,6 +6,7 @@ import io.github.vananos.sosedi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -34,6 +35,7 @@ public class ImageController {
     }
 
     @PostMapping("/photo")
+    @PreAuthorize("hasPermission(#request, 'savePhoto')")
     public ResponseEntity<BaseResponse> savePhoto(MultipartHttpServletRequest request) {
 
         MultipartFile file = request.getFile("file");
@@ -64,6 +66,7 @@ public class ImageController {
     }
 
     @DeleteMapping("/photo")
+    @PreAuthorize("hasPermission(#photoName, 'deletePhoto')")
     public ResponseEntity<BaseResponse> deletePhoto(@RequestParam("name") String photoName) {
         fileService.deleteFile(photoName);
         return ResponseEntity.ok().build();
