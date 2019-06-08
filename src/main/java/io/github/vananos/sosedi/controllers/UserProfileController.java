@@ -10,6 +10,7 @@ import io.github.vananos.sosedi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,13 +29,13 @@ public class UserProfileController {
     private UserService userService;
     private ModelMapper modelMapper;
 
-    public UserProfileController(UserService userService, ErrorProcessor errorProcessor)
-    {
+    public UserProfileController(UserService userService, ErrorProcessor errorProcessor) {
         this.errorProcessor = errorProcessor;
         this.userService = userService;
     }
 
     @GetMapping("/profile")
+    @PreAuthorize("hasPermission(#userId, 'UserProfile', 'read')")
     public ResponseEntity<BaseResponse<UserProfileInfo>> getUserProfileInfo(@RequestParam("userid") Long userId) {
         User user;
         user = userService.findUserById(userId);
@@ -52,10 +53,10 @@ public class UserProfileController {
     }
 
     @PostMapping("/profile")
+    @PreAuthorize("hasPermission(#userProfileInfo, 'write')")
     public ResponseEntity<BaseResponse> updateUserProfile(
             @RequestBody @Valid UserProfileInfo userProfileInfo,
-            BindingResult bindingResult)
-    {
+            BindingResult bindingResult) {
         Optional<List<Error>> errors = errorProcessor.handleErrors(bindingResult);
         if (errors.isPresent()) {
             return ResponseEntity.badRequest().body(new BaseResponse().errors(errors.get()));

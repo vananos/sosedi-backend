@@ -3,6 +3,7 @@ package io.github.vananos.sosedi.controllers;
 import io.github.vananos.sosedi.exceptions.UserNotFoundException;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
+import io.github.vananos.sosedi.security.UserDetailsImpl;
 import io.github.vananos.sosedi.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
@@ -27,6 +27,7 @@ import static io.github.vananos.Utils.toJson;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -36,7 +37,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser
 public class UserProfileControllerTest {
     private static final String USER_PROFILE_ENDPOINT = "/profile";
 
@@ -52,7 +52,7 @@ public class UserProfileControllerTest {
 
         when(userService.findUserById(1L)).thenReturn(validUser);
 
-        mvc.perform(get(USER_PROFILE_ENDPOINT + "?userid=1"))
+        mvc.perform(get(USER_PROFILE_ENDPOINT + "?userid=1").with(user(new UserDetailsImpl((getUser())))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.userId", is(1)))
                 .andExpect(jsonPath("data.name", is(validUser.getName())))
@@ -69,7 +69,7 @@ public class UserProfileControllerTest {
 
         mvc.perform(get(USER_PROFILE_ENDPOINT + "?userid=1"))
 
-                .andExpect(status().isNotFound());
+                .andExpect(status().isUnauthorized());
     }
 
 
@@ -136,7 +136,7 @@ public class UserProfileControllerTest {
                 Arguments.of(withoutDescription, "description"),
                 Arguments.of(withInvalidBirthday, "birthday"),
                 Arguments.of(withInvalidPhone, "phone")
-                        );
+        );
     }
 
     private static User getValidUser() {
@@ -168,8 +168,18 @@ public class UserProfileControllerTest {
     }
 
     private MockHttpServletRequestBuilder updatePost() {
+
         return post(USER_PROFILE_ENDPOINT)
+                .with(user(new UserDetailsImpl(getUser())))
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8");
+    }
+
+    private User getUser() {
+        User user = new User();
+        user.setName("testUser");
+        user.setPassword("pass");
+        user.setId(1L);
+        return user;
     }
 }
