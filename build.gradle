@@ -38,6 +38,8 @@ dependencies {
 
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
     compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.4'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-mail', version: '2.1.5.RELEASE'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-thymeleaf', version: '2.1.5.RELEASE'
 
     compileOnly 'org.projectlombok:lombok:1.18.8'
     annotationProcessor 'org.projectlombok:lombok:1.18.8'

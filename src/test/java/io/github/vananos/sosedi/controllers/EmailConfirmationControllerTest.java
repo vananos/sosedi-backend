@@ -1,7 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
 import io.github.vananos.sosedi.models.User;
-import io.github.vananos.sosedi.service.UserService;
+import io.github.vananos.sosedi.service.UserConfirmationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,7 @@ public class EmailConfirmationControllerTest {
     public static final String EMAIL_CONFIRMATION_URL = "/confirmation/confirmationCode";
 
     @MockBean
-    private UserService userService;
+    private UserConfirmationService userConfirmationService;
 
     @Autowired
     private MockMvc mvc;
@@ -40,7 +40,7 @@ public class EmailConfirmationControllerTest {
     public void emailConfirmation_success() throws Exception {
         User expectedUser = new User();
         expectedUser.setName("test");
-        when(userService.confirmEmail(eq("confirmationCode"))).thenReturn(Optional.of(expectedUser));
+        when(userConfirmationService.confirmEmail(eq("confirmationCode"))).thenReturn(Optional.of(expectedUser));
 
         mvc.perform(MockMvcRequestBuilders.get(EMAIL_CONFIRMATION_URL))
                 .andExpect(status().isFound())
@@ -52,7 +52,7 @@ public class EmailConfirmationControllerTest {
     public void emailConfirmation_notExistingConfirmationId() throws Exception {
         User expectedUser = new User();
         expectedUser.setName("test");
-        when(userService.confirmEmail(eq("confirmationCode"))).thenReturn(Optional.empty());
+        when(userConfirmationService.confirmEmail(eq("confirmationCode"))).thenReturn(Optional.empty());
 
         mvc.perform(MockMvcRequestBuilders.get(EMAIL_CONFIRMATION_URL))
                 .andExpect(status().isFound())

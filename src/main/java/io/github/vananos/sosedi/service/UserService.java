@@ -12,6 +12,4 @@ public interface UserService {
     User findUserById(Long id);
 
     void setAvatarForUser(String avatar, Long userId);
-
-    Optional<User> confirmEmail(String confirmationId);
 }

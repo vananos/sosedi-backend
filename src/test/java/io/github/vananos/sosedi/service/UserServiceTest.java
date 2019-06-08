@@ -74,23 +74,6 @@ public class UserServiceTest {
         });
     }
 
-    @Test
-    public void confirmEmailExistingCode_success() {
-        User expectedUser = new User();
-        expectedUser.setName("test");
-        when(userRepository.findByEmailConfirmationId("confirmationCode")).thenReturn(Optional.of(expectedUser));
-        Optional<User> resultUser = userService.confirmEmail("confirmationCode");
-        assertThat(resultUser)
-                .isNotEmpty()
-                .get();
-
-
-        assertThat(expectedUser.getUserStatus()).isEqualTo(User.UserStatus.EMAIL_CONFIRMED);
-
-        verify(userRepository, times(1)).save(eq(expectedUser));
-
-    }
-
     private User getValidUser() {
         User expectedUser = new User();
         expectedUser.setId(1L);
