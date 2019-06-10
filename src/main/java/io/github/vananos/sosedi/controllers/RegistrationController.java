@@ -1,6 +1,5 @@
 package io.github.vananos.sosedi.controllers;
 
-import io.github.vananos.sosedi.components.validation.ErrorProcessor;
 import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
@@ -17,8 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+
+import static io.github.vananos.sosedi.components.validation.ErrorProcessingUtils.assertHasNoErrors;
 
 @RestController
 public class RegistrationController {
@@ -26,29 +25,23 @@ public class RegistrationController {
     public static final String PASSWORD_CONFIRMATION_MUST_MATCH = "password confirmation must match";
 
     private UserService userService;
-    private ErrorProcessor errorProcessor;
 
     @Autowired
-    public RegistrationController(UserService userService, ErrorProcessor errorProcessor)
-    {
+    public RegistrationController(UserService userService) {
         this.userService = userService;
-        this.errorProcessor = errorProcessor;
     }
 
     @PostMapping("/register")
     public ResponseEntity<BaseResponse> register(
             @RequestBody @Valid RegistrationRequest registrationRequest,
-            BindingResult bindingResult)
-    {
-        Optional<List<Error>> errors = errorProcessor.handleErrors(bindingResult);
-        if (errors.isPresent()) {
-            return ResponseEntity.badRequest()
-                    .body(new BaseResponse().errors(errors.get()));
-        }
+            BindingResult bindingResult) {
+
+        assertHasNoErrors(bindingResult);
 
         User user = new ModelMapper().map(registrationRequest, User.class);
         try {
             userService.registerUser(user);
+            // TODO глобальный контроль исключений!
         } catch (UserAlreadyExists e) {
             return ResponseEntity.badRequest()
                     .body(new BaseResponse()

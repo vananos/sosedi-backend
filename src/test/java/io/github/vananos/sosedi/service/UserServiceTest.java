@@ -16,17 +16,19 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.time.LocalDate;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 public class UserServiceTest {
+    private static String CONFIRMATION_LINK = "conirmationlink";
 
     @MockBean
     private UserRepository userRepository;
+
+    @MockBean
+    private UserConfirmationService userConfirmationService;
 
     @Autowired
     private UserService userService;
@@ -39,13 +41,15 @@ public class UserServiceTest {
         User validUser = getValidUser();
         when(userRepository.save(validUser)).thenReturn(validUser);
         when(passwordEncoder.encode(any())).thenReturn("encodedPassword");
-
+        when(userConfirmationService.generateLink()).thenReturn(CONFIRMATION_LINK);
         userService.registerUser(validUser);
 
-        User expectedUser = getValidUser();
-        expectedUser.setPassword(passwordEncoder.encode(validUser.getPassword()));
+        User expectedUserProfile = getValidUser();
+        expectedUserProfile.setPassword(passwordEncoder.encode(validUser.getPassword()));
+        expectedUserProfile.setEmailConfirmationId(CONFIRMATION_LINK);
 
-        verify(userRepository, times(1)).save(eq(expectedUser));
+        verify(userConfirmationService, timeout(1000).times(1)).sendConfirmationLetter(expectedUserProfile);
+        verify(userRepository, times(1)).save(eq(expectedUserProfile));
     }
 
     @Test
@@ -72,23 +76,6 @@ public class UserServiceTest {
         assertThrows(UserNotFoundException.class, () -> {
             userService.updateUserInfo(getValidUser());
         });
-    }
-
-    @Test
-    public void confirmEmailExistingCode_success() {
-        User expectedUser = new User();
-        expectedUser.setName("test");
-        when(userRepository.findByEmailConfirmationId("confirmationCode")).thenReturn(Optional.of(expectedUser));
-        Optional<User> resultUser = userService.confirmEmail("confirmationCode");
-        assertThat(resultUser)
-                .isNotEmpty()
-                .get();
-
-
-        assertThat(expectedUser.getUserStatus()).isEqualTo(User.UserStatus.EMAIL_CONFIRMED);
-
-        verify(userRepository, times(1)).save(eq(expectedUser));
-
     }
 
     private User getValidUser() {
