@@ -1,7 +1,8 @@
 package io.github.vananos.sosedi.components.validation;
 
+import io.github.vananos.sosedi.exceptions.BadParametersException;
 import io.github.vananos.sosedi.models.dto.registration.Error;
-import org.springframework.stereotype.Component;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;
@@ -9,10 +10,17 @@ import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
-@Component
-public class ErrorProcessor {
+@Slf4j
+public class ErrorProcessingUtils {
 
-    public Optional<List<Error>> handleErrors(BindingResult bindingResult) {
+    public static void assertHasNoErrors(BindingResult bindingResult) {
+        Optional<List<Error>> errors = handleErrors(bindingResult);
+        if (errors.isPresent()) {
+            throw new BadParametersException(errors.get());
+        }
+    }
+
+    public static Optional<List<Error>> handleErrors(BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             List<Error> errors = bindingResult.getFieldErrors().stream()
                     .map(e -> new Error().id(e.getField()).description(e.getDefaultMessage()))

@@ -11,6 +11,7 @@ import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserConfirmationServiceImpl implements UserConfirmationService {
@@ -48,5 +49,10 @@ public class UserConfirmationServiceImpl implements UserConfirmationService {
         }
 
         return user;
+    }
+
+    @Override
+    public String generateLink() {
+        return UUID.randomUUID().toString();
     }
 }

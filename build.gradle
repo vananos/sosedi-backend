@@ -22,8 +22,6 @@ repositories {
 }
 
 test {
-    systemProperty "spring.datasource.username", project.getProperty("spring.datasource.username")
-    systemProperty "spring.datasource.password", project.getProperty("spring.datasource.password")
     useJUnitPlatform()
 }
 

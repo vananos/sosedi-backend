@@ -1,10 +1,8 @@
 package io.github.vananos.sosedi.controllers;
 
-import io.github.vananos.sosedi.components.validation.ErrorProcessor;
 import io.github.vananos.sosedi.exceptions.UserNotFoundException;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
-import io.github.vananos.sosedi.models.dto.registration.Error;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
 import io.github.vananos.sosedi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -16,21 +14,17 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
+import static io.github.vananos.sosedi.components.validation.ErrorProcessingUtils.assertHasNoErrors;
 import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 
 @RestController
 @Slf4j
 public class UserProfileController {
-    private ErrorProcessor errorProcessor;
     private UserService userService;
-    private ModelMapper modelMapper;
 
-    public UserProfileController(UserService userService, ErrorProcessor errorProcessor) {
-        this.errorProcessor = errorProcessor;
+    public UserProfileController(UserService userService) {
         this.userService = userService;
     }
 
@@ -57,10 +51,9 @@ public class UserProfileController {
     public ResponseEntity<BaseResponse> updateUserProfile(
             @RequestBody @Valid UserProfileInfo userProfileInfo,
             BindingResult bindingResult) {
-        Optional<List<Error>> errors = errorProcessor.handleErrors(bindingResult);
-        if (errors.isPresent()) {
-            return ResponseEntity.badRequest().body(new BaseResponse().errors(errors.get()));
-        }
+
+        assertHasNoErrors(bindingResult);
+
         User user = new ModelMapper().map(userProfileInfo, User.class);
         user.setInterests(String.join(",", userProfileInfo.getInterests()));
         user.setUserStatus(User.UserStatus.PROFILE_FILLED);

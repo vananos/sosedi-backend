@@ -11,8 +11,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -33,7 +31,7 @@ public class UserServiceImpl implements UserService {
     public void registerUser(User user) {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setEmailConfirmationId(UUID.randomUUID().toString());
+            user.setEmailConfirmationId(userConfirmationService.generateLink());
             userRepository.save(user);
             new Thread(() -> userConfirmationService.sendConfirmationLetter(user)).start();
         } catch (DataIntegrityViolationException e) {
