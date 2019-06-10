@@ -4,6 +4,7 @@ import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -37,6 +38,10 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
 
         String permissionType = (String) permission;
         User user = ((UserDetailsImpl) authentication.getPrincipal()).getUser();
+        if (user.getUserStatus() == User.UserStatus.EMAIL_UNCONFIRMED) {
+            throw new AccessDeniedException("user email is not confirmed");
+        }
+
         if (permissionType.equals("write") && targetObjectInfo.targetObject instanceof UserProfileInfo) {
             return ((UserProfileInfo) targetObjectInfo.targetObject).getId().equals(user.getId());
         }
