@@ -1,9 +1,10 @@
 package io.github.vananos.sosedi.models;
 
+import io.github.vananos.sosedi.components.ListConverter;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -14,40 +15,44 @@ public class Advertisement {
     @Column(name = "ID")
     private Long id;
 
-    @JoinColumn()
-    private Long userId;
+    @Column(name = "MALE")
+    private Boolean male;
 
-    @Column(name = "EMAIL", nullable = false, unique = true)
-    private String email;
+    @Column(name = "FEMALE")
+    private Boolean female;
 
-    @Column(name = "NAME", nullable = false)
-    private String name;
+    @Column(name = "LANDLORD")
+    private Boolean landlord;
 
-    @Column(name = "SURNAME", nullable = false)
-    private String surname;
+    @Column(name = "PLACE_ID")
+    private String placeId;
 
-    @Column(name = "PASSWORD", nullable = false)
-    private String password;
+    @Column(name = "SMOKING")
+    @Enumerated(EnumType.STRING)
+    private Attitude Smoking;
 
-    @Column(name = "BIRTHDAY")
-    private LocalDate birthday;
+    @Column(name = "ANIMALS")
+    @Enumerated(EnumType.STRING)
+    private Attitude animals;
 
-    @Column(name = "PHONE")
-    private String phone;
+    @Column(name = "MIN_AGE")
+    private Integer minAge;
 
-    @Column(name = "INTERESTS")
-    private String interests;
+    @Column(name = "MAX_AGE")
+    private Integer maxAge;
 
-    @Column(name = "description")
+    @Column(name = "ROOM_TYPE", columnDefinition = "jsonb")
+    @Convert(converter = ListConverter.class)
+    private List<RoomType> roomType;
+
+    @Column(name = "CONVENIENCES", columnDefinition = "jsonb")
+    @Convert(converter = ListConverter.class)
+    private List<Convenience> conveniences;
+
+    @Column(name = "RENT_PAY")
+    private Integer rentPay;
+
+    @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "STATUS")
-    @Enumerated(EnumType.STRING)
-    private User.UserStatus userStatus = User.UserStatus.EMAIL_UNCONFIRMED;
-
-    public enum UserStatus {
-        EMAIL_UNCONFIRMED,
-        EMAIL_CONFIRMED,
-        PROFILE_FILLED
-    }
 }

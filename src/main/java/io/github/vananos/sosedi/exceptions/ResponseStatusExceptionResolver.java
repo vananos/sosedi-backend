@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.persistence.EntityNotFoundException;
+
 @Slf4j
 @ControllerAdvice
 public class ResponseStatusExceptionResolver extends ResponseEntityExceptionHandler {
@@ -19,5 +21,10 @@ public class ResponseStatusExceptionResolver extends ResponseEntityExceptionHand
     public ResponseEntity<Object> handleBadRequest(final BadParametersException ex, final WebRequest request) throws JsonProcessingException {
         final String bodyOfResponse = new ObjectMapper().writeValueAsString(new BaseResponse<>().errors(ex.getErrorList()));
         return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleBadRequest(final EntityNotFoundException ex, final WebRequest request) throws JsonProcessingException {
+        return handleExceptionInternal(ex, "entity not found", new HttpHeaders(), HttpStatus.NOT_FOUND, request);
     }
 }

@@ -1,6 +1,7 @@
 package io.github.vananos.sosedi.config.security;
 
 import io.github.vananos.sosedi.security.CustomPermissionEvaluator;
+import io.github.vananos.sosedi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +15,6 @@ import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler;
@@ -27,10 +27,12 @@ import org.springframework.web.cors.CorsConfiguration;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
+    private PasswordEncoder passwordEncoder;
     private AuthenticationEntryPoint authenticationEntryPoint;
     private UserDetailsService userDetailsService;
     private AuthenticationSuccessHandler authenticationSuccessHandler;
     private SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
+    private UserService userService;
 
     @Value("${sosedi.cors.dev}")
     private Boolean isCorsDev;
@@ -39,10 +41,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public SecurityConfig(
             AuthenticationEntryPoint authenticationEntryPoint,
             UserDetailsService userDetailsService,
-            AuthenticationSuccessHandler authenticationSuccessHandler) {
+            AuthenticationSuccessHandler authenticationSuccessHandler,
+            UserService userService,
+            PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
+        this.userService = userService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -77,15 +83,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(10);
-    }
-
-    @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setUserDetailsService(userDetailsService);
-        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder());
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         return daoAuthenticationProvider;
     }
 
@@ -98,6 +99,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PermissionEvaluator customPermissionEvaluator() {
-        return new CustomPermissionEvaluator();
+        return new CustomPermissionEvaluator(userService);
     }
 }

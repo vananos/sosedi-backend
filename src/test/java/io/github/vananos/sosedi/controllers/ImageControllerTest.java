@@ -1,6 +1,5 @@
 package io.github.vananos.sosedi.controllers;
 
-import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.security.UserDetailsImpl;
 import io.github.vananos.sosedi.service.FileService;
 import io.github.vananos.sosedi.service.UserService;
@@ -19,6 +18,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+import static io.github.vananos.Utils.getValidUser;
 import static org.hamcrest.Matchers.equalTo;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -54,7 +54,7 @@ public class ImageControllerTest {
         mvc.perform(MockMvcRequestBuilders
                 .fileUpload(IMAGE_UPLOAD_ENDPOINT)
                 .file(new MockMultipartFile("file", image)).param("userId", "1")
-                .with(user(new UserDetailsImpl(getUser()))))
+                .with(user(new UserDetailsImpl(getValidUser()))))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("data.name", equalTo(expectedFileName)));
 
@@ -70,18 +70,10 @@ public class ImageControllerTest {
         mvc.perform(MockMvcRequestBuilders
                 .fileUpload(IMAGE_UPLOAD_ENDPOINT)
                 .file(new MockMultipartFile("file", notImage)).param("userId", "1")
-                .with(user(new UserDetailsImpl(getUser()))))
+                .with(user(new UserDetailsImpl(getValidUser()))))
                 .andExpect(status().isBadRequest());
 
         verify(fileService, times(0)).saveFile(any());
-    }
-
-    private User getUser() {
-        User user = new User();
-        user.setId(1L);
-        user.setName("testUser");
-        user.setPassword("password");
-        return user;
     }
 
 }

@@ -1,9 +1,12 @@
 package io.github.vananos.sosedi.security;
 
 import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.dto.ad.AdRequest;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
+import io.github.vananos.sosedi.service.UserService;
 import lombok.Data;
 import lombok.experimental.Accessors;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -12,6 +15,13 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 import java.io.Serializable;
 
 public class CustomPermissionEvaluator implements PermissionEvaluator {
+
+    private UserService userService;
+
+    @Autowired
+    public CustomPermissionEvaluator(UserService userService) {
+        this.userService = userService;
+    }
 
     @Data
     @Accessors(fluent = true)
@@ -45,6 +55,14 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
         if (permissionType.equals("write") && targetObjectInfo.targetObject instanceof UserProfileInfo) {
             return ((UserProfileInfo) targetObjectInfo.targetObject).getId().equals(user.getId());
         }
+        if (permissionType.equals("write") && targetObjectInfo.targetObject instanceof AdRequest) {
+            AdRequest adRequest = (AdRequest) targetObjectInfo.targetObject;
+            return adRequest.getId() == null ||
+                    userService.findUserById(adRequest.getUserId())
+                            .getAdvertisement()
+                            .getId()
+                            .equals(adRequest.getUserId());
+        }
 
         if (permissionType.equals("read") && targetObjectInfo.targetType != null) {
             String type = targetObjectInfo.targetType;
@@ -52,8 +70,8 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
                 return targetObjectInfo.targetId.equals(user.getId());
             }
 
-            if (type.equals("Ad")) {
-
+            if (type.equals("AdInfo")) {
+                return (targetObjectInfo.targetId()).equals(user.getAdvertisement().getId());
             }
         }
 
