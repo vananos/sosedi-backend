@@ -19,10 +19,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.stream.Stream;
 
+import static io.github.vananos.Utils.getValidUser;
 import static io.github.vananos.Utils.toJson;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.eq;
@@ -139,21 +139,6 @@ public class UserProfileControllerTest {
         );
     }
 
-    private static User getValidUser() {
-        User expectedUser = new User();
-        expectedUser.setId(1L);
-        expectedUser.setName("testUser");
-        expectedUser.setSurname("testSurName");
-        expectedUser.setPassword("somePassword");
-        expectedUser.setUserStatus(User.UserStatus.EMAIL_UNCONFIRMED);
-        expectedUser.setBirthday(LocalDate.of(2000, 11, 21));
-        expectedUser.setDescription("About myself");
-        expectedUser.setEmail("someemail@gmail.com");
-        expectedUser.setPhone("+7 (999) 222 33 44");
-        expectedUser.setInterests("");
-        return expectedUser;
-    }
-
     private static UserProfileInfo getValidUserProfileInfo() {
         UserProfileInfo userProfileInfo = new UserProfileInfo();
         User validUser = getValidUser();
@@ -180,6 +165,7 @@ public class UserProfileControllerTest {
         user.setName("testUser");
         user.setPassword("pass");
         user.setId(1L);
+        user.setUserStatus(User.UserStatus.EMAIL_CONFIRMED);
         return user;
     }
 }

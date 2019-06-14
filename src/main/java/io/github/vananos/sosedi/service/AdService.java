@@ -4,4 +4,6 @@ import io.github.vananos.sosedi.models.Advertisement;
 
 public interface AdService {
     Advertisement getAd(Long id);
+
+    Advertisement saveAdForUser(Long userId, Advertisement ad);
 }
