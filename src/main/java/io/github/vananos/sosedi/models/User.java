@@ -50,7 +50,7 @@ public class User {
     private UserStatus userStatus = UserStatus.EMAIL_UNCONFIRMED;
 
     @JoinColumn(name = "advertisementId")
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
     private Advertisement advertisement;
 
     public enum UserStatus {

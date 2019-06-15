@@ -71,7 +71,7 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
             }
 
             if (type.equals("AdInfo")) {
-                return (targetObjectInfo.targetId()).equals(user.getAdvertisement().getId());
+                return (targetObjectInfo.targetId()).equals(user.getId());
             }
         }
 

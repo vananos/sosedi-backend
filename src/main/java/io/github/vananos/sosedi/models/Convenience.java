@@ -1,5 +1,5 @@
 package io.github.vananos.sosedi.models;
 
 public enum Convenience {
-    TV, MICROWAVE
+    TV, WASHER, FRIDGE, INTERNET, DISHWASHER, GALLERY
 }

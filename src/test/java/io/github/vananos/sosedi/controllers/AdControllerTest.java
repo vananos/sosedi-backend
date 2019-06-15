@@ -55,7 +55,7 @@ public class AdControllerTest {
         ad.setId(1L);
         user.setAdvertisement(ad);
 
-        mvc.perform(get("/ad?id=2").with(user(new UserDetailsImpl(user))))
+        mvc.perform(get("/ad?userid=2").with(user(new UserDetailsImpl(user))))
                 .andExpect(status().isForbidden());
     }
 

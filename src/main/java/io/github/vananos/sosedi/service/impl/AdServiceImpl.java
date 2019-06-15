@@ -21,12 +21,12 @@ public class AdServiceImpl implements AdService {
     }
 
     @Override
-    public Advertisement getAd(Long id) {
-        return adRepository.getOne(id);
+    public Advertisement getAd(Long userId) {
+        return userService.findUserById(userId).getAdvertisement();
     }
 
     public Advertisement saveAdForUser(Long userId, Advertisement ad) {
-        User user = userService.findUserById(ad.getId());
+        User user = userService.findUserById(userId);
         user.setAdvertisement(ad);
         user = userService.updateUserInfo(user);
         return user.getAdvertisement();

@@ -2,6 +2,7 @@ package io.github.vananos.sosedi.models.dto.ad;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.vananos.sosedi.models.Attitude;
+import io.github.vananos.sosedi.models.Convenience;
 import io.github.vananos.sosedi.models.RoomType;
 import lombok.Data;
 
@@ -16,7 +17,7 @@ public class AdResponse {
     @JsonProperty("userId")
     private Long userId;
 
-    @JsonProperty("isLandLord")
+    @JsonProperty("landlord")
     private Boolean landLord;
 
     @JsonProperty("placeId")
@@ -43,8 +44,8 @@ public class AdResponse {
     @JsonProperty("roomType")
     private List<RoomType> roomType;
 
-    @JsonProperty("addConv")
-    private List<String> additionalConveniences;
+    @JsonProperty("conveniences")
+    private List<Convenience> conveniences;
 
     @JsonProperty("rentPay")
     private Integer rentPay;

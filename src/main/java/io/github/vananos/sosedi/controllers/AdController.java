@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 
 import static io.github.vananos.sosedi.components.validation.ErrorProcessingUtils.assertHasNoErrors;
+import static java.util.Objects.isNull;
 
 @RestController
 public class AdController {
@@ -25,10 +26,13 @@ public class AdController {
     }
 
     @GetMapping("/ad")
-    @PreAuthorize("hasPermission(#id, 'AdInfo', 'read')")
-    public ResponseEntity<BaseResponse<AdResponse>> getAd(@RequestParam("id") Long id) {
-        AdResponse adResponse = new ModelMapper().map(adService.getAd(id), AdResponse.class);
-        return ResponseEntity.ok(new BaseResponse().data(adResponse));
+    @PreAuthorize("hasPermission(#userId, 'AdInfo', 'read')")
+    public ResponseEntity<BaseResponse<AdResponse>> getAd(@RequestParam("userid") Long userId) {
+        Advertisement ad = adService.getAd(userId);
+        if (isNull(ad)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(new BaseResponse().data(new ModelMapper().map(ad, AdResponse.class)));
     }
 
     @PostMapping("ad")
