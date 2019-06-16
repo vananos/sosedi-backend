@@ -82,9 +82,10 @@ public class UserProfileControllerTest {
 
         User expectedUser = getValidUser();
         expectedUser.setEmail(null);
-        expectedUser.setInterests("");
+        expectedUser.setInterests(Collections.emptyList());
         expectedUser.setPassword(null);
         expectedUser.setUserStatus(User.UserStatus.PROFILE_FILLED);
+        expectedUser.setGender(null);
 
         verify(userService, times(1)).updateUserInfo(eq(expectedUser));
     }

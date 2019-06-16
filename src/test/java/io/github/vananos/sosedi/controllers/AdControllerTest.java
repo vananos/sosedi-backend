@@ -1,10 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-import io.github.vananos.sosedi.models.Advertisement;
-import io.github.vananos.sosedi.models.Attitude;
-import io.github.vananos.sosedi.models.Convenience;
-import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.*;
 import io.github.vananos.sosedi.models.dto.ad.AdRequest;
 import io.github.vananos.sosedi.models.dto.ad.AdResponse;
 import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
@@ -39,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WithMockUser
 public class AdControllerTest {
-    private static final String DESCRIPTION = "description about myself";
 
     @Autowired
     private MockMvc mvc;
@@ -64,7 +60,7 @@ public class AdControllerTest {
         AdRequest adRequest = getValidAdRequestForUser();
         adRequest.setId(null);
 
-        when(adService.saveAdForUser(eq(1L), any())).thenReturn(getValidAdverstiment());
+        when(adService.saveAdForUser(eq(1L), any())).thenReturn(getValidAdvertisement());
 
         String jsonResponse = mvc.perform(postAdUpdate()
                 .with(user(new UserDetailsImpl(getValidUser())))
@@ -86,35 +82,16 @@ public class AdControllerTest {
 
         adRequest.setAnimals(Attitude.GOOD);
         adRequest.setSmoking(Attitude.BAD);
-        adRequest.setDescription(DESCRIPTION);
-        adRequest.setLandlord(true);
+        adRequest.setDescription(AD_DESCRIPTION);
+        adRequest.setLandlord(false);
         adRequest.setConveniences(asList(Convenience.TV));
-        adRequest.setFemale(true);
-        adRequest.setMale(true);
-        adRequest.setMinAge(20);
+        adRequest.setGender(Gender.ANY);
+        adRequest.setMinAge(18);
         adRequest.setMaxAge(40);
         adRequest.setRentPay(15000);
         adRequest.setPlaceId("SPB");
         adRequest.setRoomType(asList(SINGLE));
         return adRequest;
-    }
-
-    private Advertisement getValidAdverstiment() {
-        Advertisement ad = new Advertisement();
-        ad.setId(1L);
-        ad.setAnimals(Attitude.GOOD);
-        ad.setSmoking(Attitude.BAD);
-        ad.setDescription(DESCRIPTION);
-        ad.setLandlord(true);
-        ad.setConveniences(asList(Convenience.TV));
-        ad.setMale(true);
-        ad.setFemale(true);
-        ad.setMinAge(20);
-        ad.setMaxAge(40);
-        ad.setRentPay(15000);
-        ad.setPlaceId("SPB");
-        ad.setRoomType(asList(SINGLE));
-        return ad;
     }
 
     private AdResponse getValidAdResponse() {
@@ -123,11 +100,10 @@ public class AdControllerTest {
         adResponse.setUserId(1L);
         adResponse.setAnimals(Attitude.GOOD);
         adResponse.setSmoking(Attitude.BAD);
-        adResponse.setDescription(DESCRIPTION);
-        adResponse.setLandLord(true);
-        adResponse.setMale(true);
-        adResponse.setFemale(true);
-        adResponse.setMinAge(20);
+        adResponse.setDescription(AD_DESCRIPTION);
+        adResponse.setLandLord(false);
+        adResponse.setGender(Gender.ANY);
+        adResponse.setMinAge(18);
         adResponse.setMaxAge(40);
         adResponse.setRentPay(15000);
         adResponse.setPlaceId("SPB");

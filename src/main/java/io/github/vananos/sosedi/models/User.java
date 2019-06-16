@@ -1,9 +1,11 @@
 package io.github.vananos.sosedi.models;
 
+import io.github.vananos.sosedi.components.ListConverter;
 import lombok.Data;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.util.List;
 
 @Data
 @Entity
@@ -36,8 +38,9 @@ public class User {
     @Column(name = "PHONE")
     private String phone;
 
-    @Column(name = "INTERESTS")
-    private String interests;
+    @Column(name = "INTERESTS", columnDefinition = "jsonb")
+    @Convert(converter = ListConverter.class)
+    private List<Interests> interests;
 
     @Column(name = "description")
     private String description;
@@ -49,9 +52,13 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserStatus userStatus = UserStatus.EMAIL_UNCONFIRMED;
 
-    @JoinColumn(name = "advertisementId")
-    @OneToOne(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @JoinColumn(name = "ADVERTISEMENT_ID")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Advertisement advertisement;
+
+    @Column(name = "GENDER")
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     public enum UserStatus {
         EMAIL_UNCONFIRMED,

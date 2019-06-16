@@ -14,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -89,7 +90,7 @@ public class UserServiceTest {
         expectedUser.setDescription("About myself");
         expectedUser.setEmail("someemail@gmail.com");
         expectedUser.setPhone("+7-(999)-222-33-44");
-        expectedUser.setInterests("");
+        expectedUser.setInterests(Collections.emptyList());
         return expectedUser;
     }
 }

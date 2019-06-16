@@ -1,6 +1,7 @@
 package io.github.vananos.sosedi.models.dto.userprofile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.vananos.sosedi.models.Interests;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
@@ -37,7 +38,7 @@ public class UserProfileInfo {
 
     @JsonProperty("interests")
     @NotNull
-    private List<String> interests;
+    private List<Interests> interests;
 
     @JsonProperty("description")
     @Size(max = 512)

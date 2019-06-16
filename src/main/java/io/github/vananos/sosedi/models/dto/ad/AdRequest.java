@@ -3,6 +3,7 @@ package io.github.vananos.sosedi.models.dto.ad;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.github.vananos.sosedi.models.Attitude;
 import io.github.vananos.sosedi.models.Convenience;
+import io.github.vananos.sosedi.models.Gender;
 import io.github.vananos.sosedi.models.RoomType;
 import lombok.Data;
 
@@ -19,13 +20,9 @@ public class AdRequest {
     @JsonProperty("userId")
     private Long userId;
 
-    @JsonProperty("male")
+    @JsonProperty("gender")
     @NotNull
-    private Boolean male;
-
-    @JsonProperty("female")
-    @NotNull
-    private Boolean female;
+    private Gender gender;
 
     @JsonProperty("landlord")
     @NotNull

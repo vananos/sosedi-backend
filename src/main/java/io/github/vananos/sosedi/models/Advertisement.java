@@ -15,11 +15,9 @@ public class Advertisement {
     @Column(name = "ID")
     private Long id;
 
-    @Column(name = "MALE")
-    private Boolean male;
-
-    @Column(name = "FEMALE")
-    private Boolean female;
+    @Column(name = "GENDER")
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
 
     @Column(name = "LANDLORD")
     private Boolean landlord;

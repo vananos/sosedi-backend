@@ -7,13 +7,18 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+
+import static io.github.vananos.sosedi.models.RoomType.SINGLE;
+import static java.util.Arrays.asList;
 
 public class Utils {
+    public static final String AD_DESCRIPTION = "description about myself";
 
     public static String toJson(Object o) {
         ObjectMapper objectMapper = new ObjectMapper();
@@ -77,7 +82,26 @@ public class Utils {
         expectedUser.setDescription("About myself");
         expectedUser.setEmail("someemail@gmail.com");
         expectedUser.setPhone("+7 (999) 222 33 44");
-        expectedUser.setInterests("");
+        expectedUser.setInterests(Collections.emptyList());
+        expectedUser.setGender(Gender.MALE);
         return expectedUser;
+    }
+
+
+    public static Advertisement getValidAdvertisement() {
+        Advertisement ad = new Advertisement();
+        ad.setId(1L);
+        ad.setAnimals(Attitude.GOOD);
+        ad.setSmoking(Attitude.BAD);
+        ad.setDescription(AD_DESCRIPTION);
+        ad.setLandlord(false);
+        ad.setConveniences(asList(Convenience.TV));
+        ad.setGender(Gender.ANY);
+        ad.setMinAge(18);
+        ad.setMaxAge(40);
+        ad.setRentPay(15000);
+        ad.setPlaceId("SPB");
+        ad.setRoomType(asList(SINGLE));
+        return ad;
     }
 }
