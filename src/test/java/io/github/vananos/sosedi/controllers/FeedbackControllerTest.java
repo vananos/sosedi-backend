@@ -4,10 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.vananos.sosedi.models.dto.feedback.FeedbackRequest;
 import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
 import io.github.vananos.sosedi.models.dto.registration.Error;
-import io.github.vananos.sosedi.service.UserService;
+import io.github.vananos.sosedi.service.EmailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,6 +22,10 @@ import java.util.List;
 
 import static io.github.vananos.Utils.toJson;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.after;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -32,21 +37,26 @@ public class FeedbackControllerTest {
 
     public static final String FEEDBACK_ENDPOINT = "/feedback";
 
-    @MockBean
-    private UserService userService;
-
     @Autowired
     private MockMvc mvc;
+
+    @Value("${admin.email}")
+    private String adminEmail;
+
+    @MockBean
+    private EmailService emailService;
 
     @Test
     public void validFeedBack_success() throws Exception {
         FeedbackRequest validFeedbackRequest = new FeedbackRequest();
-        validFeedbackRequest.setEmail("test@test.ru");
+        validFeedbackRequest.setEmail("van8025@yandex.ru");
         validFeedbackRequest.setName("test");
         validFeedbackRequest.setMessage("help me!");
 
         mvc.perform(feedbackPost().content(toJson(validFeedbackRequest)))
                 .andExpect(status().isOk());
+
+        verify(emailService, after(1000).times(1)).sendEmail(eq(adminEmail), eq("feedback"), any());
     }
 
     @Test
