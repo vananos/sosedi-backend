@@ -4,6 +4,7 @@ import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.repository.UserRepository;
 import io.github.vananos.sosedi.service.EmailService;
 import io.github.vananos.sosedi.service.UserConfirmationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -14,6 +15,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
+@Slf4j
 public class UserConfirmationServiceImpl implements UserConfirmationService {
 
     private EmailService emailService;
@@ -24,7 +26,9 @@ public class UserConfirmationServiceImpl implements UserConfirmationService {
     private String hostName;
 
     @Autowired
-    public UserConfirmationServiceImpl(EmailService emailService, TemplateEngine templateEngine, UserRepository userRepository) {
+    public UserConfirmationServiceImpl(EmailService emailService, TemplateEngine templateEngine,
+                                       UserRepository userRepository)
+    {
         this.emailService = emailService;
         this.templateEngine = templateEngine;
         this.userRepository = userRepository;
@@ -33,7 +37,11 @@ public class UserConfirmationServiceImpl implements UserConfirmationService {
     @Override
     public void sendConfirmationLetter(User user) {
         Context ctx = new Context();
-        ctx.setVariable("confirmationLink", String.format("%s/confirm/%s", hostName, user.getEmailConfirmationId()));
+        ctx.setVariable("confirmationLink", String.format("%s/confirmation/%s", hostName,
+                user.getEmailConfirmationId()));
+
+        ctx.setVariable("cancelConfirmationLink", String.format("%s/confirmationcancel/%s", hostName,
+                user.getEmailConfirmationId()));
         ctx.setVariable("username", user.getName());
         String htmlLetter = templateEngine.process("confirmationEmail", ctx);
         emailService.sendEmail(user.getEmail(), "Подтверждение учетной записи", htmlLetter);
@@ -54,5 +62,19 @@ public class UserConfirmationServiceImpl implements UserConfirmationService {
     @Override
     public String generateLink() {
         return UUID.randomUUID().toString();
+    }
+
+    @Override
+    public boolean cancelConfirmation(String confirmationId) {
+        Optional<User> user = userRepository.findByEmailConfirmationId(confirmationId);
+        if (!user.isPresent()) {
+            return false;
+        }
+        User targetUser = user.get();
+        if (targetUser.getUserStatus() != User.UserStatus.EMAIL_UNCONFIRMED) {
+            return false;
+        }
+        userRepository.delete(targetUser);
+        return true;
     }
 }
