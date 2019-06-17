@@ -1,6 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
 import io.github.vananos.sosedi.exceptions.UserNotFoundException;
+import io.github.vananos.sosedi.models.Gender;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
 import io.github.vananos.sosedi.security.UserDetailsImpl;
@@ -85,7 +86,7 @@ public class UserProfileControllerTest {
         expectedUser.setInterests(Collections.emptyList());
         expectedUser.setPassword(null);
         expectedUser.setUserStatus(User.UserStatus.PROFILE_FILLED);
-        expectedUser.setGender(null);
+        expectedUser.setGender(Gender.MALE);
 
         verify(userService, times(1)).updateUserInfo(eq(expectedUser));
     }
@@ -150,6 +151,7 @@ public class UserProfileControllerTest {
         userProfileInfo.setPhone(validUser.getPhone());
         userProfileInfo.setId(validUser.getId());
         userProfileInfo.setInterests(Collections.emptyList());
+        userProfileInfo.setGender(Gender.MALE);
         return userProfileInfo;
     }
 

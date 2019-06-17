@@ -1,6 +1,7 @@
 package io.github.vananos.sosedi.models.dto.userprofile;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.github.vananos.sosedi.models.Gender;
 import io.github.vananos.sosedi.models.Interests;
 import lombok.Data;
 import org.hibernate.validator.constraints.Length;
@@ -50,4 +51,8 @@ public class UserProfileInfo {
 
     @JsonProperty("avatar")
     private String avatar;
+
+    @JsonProperty("gender")
+    @NotNull
+    private Gender gender;
 }

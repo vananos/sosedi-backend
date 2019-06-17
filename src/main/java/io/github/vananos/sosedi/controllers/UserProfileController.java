@@ -28,8 +28,7 @@ public class UserProfileController {
     @GetMapping("/profile")
     @PreAuthorize("hasPermission(#userId, 'UserProfile', 'read')")
     public ResponseEntity<BaseResponse<UserProfileInfo>> getUserProfileInfo(@RequestParam("userid") Long userId) {
-        User user;
-        user = userService.findUserById(userId);
+        User user = userService.findUserById(userId);
 
         UserProfileInfo userProfileInfo = new ModelMapper().map(user, UserProfileInfo.class);
 
@@ -42,11 +41,12 @@ public class UserProfileController {
     @PreAuthorize("hasPermission(#userProfileInfo, 'write')")
     public ResponseEntity<BaseResponse> updateUserProfile(
             @RequestBody @Valid UserProfileInfo userProfileInfo,
-            BindingResult bindingResult) {
+            BindingResult bindingResult)
+    {
 
         assertHasNoErrors(bindingResult);
-
-        User user = new ModelMapper().map(userProfileInfo, User.class);
+        User user = userService.findUserById(userProfileInfo.getId());
+        new ModelMapper().map(userProfileInfo, user);
         user.setUserStatus(User.UserStatus.PROFILE_FILLED);
         userService.updateUserInfo(user);
         return ResponseEntity.ok(new BaseResponse());
