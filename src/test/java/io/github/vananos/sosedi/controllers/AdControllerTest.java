@@ -132,6 +132,7 @@ public class AdControllerTest {
         adResponse.setRentPay(15000);
         adResponse.setPlaceId("SPB");
         adResponse.setRoomType(asList(SINGLE));
+        adResponse.setConveniences(asList(Convenience.TV));
         return adResponse;
     }
 
