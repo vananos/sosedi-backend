@@ -43,7 +43,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             UserDetailsService userDetailsService,
             AuthenticationSuccessHandler authenticationSuccessHandler,
             UserService userService,
-            PasswordEncoder passwordEncoder) {
+            PasswordEncoder passwordEncoder)
+    {
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
@@ -69,7 +70,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .authorizeRequests()
-                .antMatchers("/login", "/register", "/confirmation*", "/feedback")
+                .antMatchers("/login", "/register", "/confirmation*")
                 .permitAll()
                 .antMatchers("/*").authenticated()
                 .and()

@@ -26,10 +26,21 @@ public class EmailConfirmationController {
     @GetMapping("/confirmation/{confirmationId}")
     public void confirmEmail(@PathVariable("confirmationId") String confirmationId, HttpServletResponse response) throws IOException {
         Optional<User> user = userConfirmationService.confirmEmail(confirmationId);
-        String redirectPath = user.isPresent() ?
-                "/?userid=" + URLEncoder.encode(user.get().getName(), StandardCharsets.UTF_8.toString())
-                : "/error";
+        String redirectPath = "/confirmhandler" + (user.isPresent() ?
+                "?status=confirmed&username=" + URLEncoder.encode(user.get().getName(),
+                        StandardCharsets.UTF_8.toString())
+                : "?status=error");
 
         response.sendRedirect(redirectPath);
+    }
+
+    @GetMapping("/confirmationcancel/{confirmationId}")
+    public void canclerEmailConfirmation(@PathVariable("confirmationId") String confirmationId,
+                                         HttpServletResponse response) throws IOException
+    {
+
+        boolean wasSuccessfull = userConfirmationService.cancelConfirmation(confirmationId);
+
+        response.sendRedirect("/confirmhandler?status=" + (wasSuccessfull ? "cancelled" : "error"));
     }
 }
