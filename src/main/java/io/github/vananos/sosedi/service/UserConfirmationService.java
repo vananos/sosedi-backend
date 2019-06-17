@@ -10,4 +10,6 @@ public interface UserConfirmationService {
     Optional<User> confirmEmail(String confirmationId);
 
     String generateLink();
+
+    boolean cancelConfirmation(String confirmationId);
 }

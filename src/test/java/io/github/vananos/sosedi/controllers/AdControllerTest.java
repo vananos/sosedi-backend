@@ -131,6 +131,7 @@ public class AdControllerTest {
         adResponse.setMaxAge(40);
         adResponse.setRentPay(15000);
         adResponse.setPlaceId("SPB");
+        adResponse.setConveniences(asList(Convenience.TV));
         adResponse.setRoomType(asList(SINGLE));
         return adResponse;
     }
