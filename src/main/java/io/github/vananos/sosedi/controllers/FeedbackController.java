@@ -26,11 +26,12 @@ public class FeedbackController {
 
     @PostMapping("/feedback")
     public ResponseEntity<BaseResponse> feedback(@RequestBody @Valid FeedbackRequest feedbackRequest,
-                                                 BindingResult bindingResult) {
+                                                 BindingResult bindingResult)
+    {
 
         assertHasNoErrors(bindingResult);
 
         feedbackService.processFeedback(feedbackRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(new BaseResponse<>());
     }
 }
