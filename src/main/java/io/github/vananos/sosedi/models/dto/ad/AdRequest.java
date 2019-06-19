@@ -1,10 +1,7 @@
 package io.github.vananos.sosedi.models.dto.ad;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.github.vananos.sosedi.models.Attitude;
-import io.github.vananos.sosedi.models.Convenience;
-import io.github.vananos.sosedi.models.Gender;
-import io.github.vananos.sosedi.models.RoomType;
+import io.github.vananos.sosedi.models.*;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -27,10 +24,6 @@ public class AdRequest {
     @JsonProperty("landlord")
     @NotNull
     private Boolean landlord;
-
-    @JsonProperty("placeId")
-    @NotNull
-    private String placeId;
 
     @JsonProperty("smoking")
     @NotNull
@@ -64,4 +57,8 @@ public class AdRequest {
     @NotNull
     @Size(max = 512)
     private String description;
+
+    @JsonProperty("placeId")
+    @NotNull
+    private GeoInfo placeId;
 }

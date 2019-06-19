@@ -76,15 +76,14 @@ public class UserProfileControllerTest {
 
     @Test
     public void postValidUpdateInfo_profileUpdated() throws Exception {
+        when(userService.findUserById(any())).thenReturn(getValidUser());
         when(userService.updateUserInfo(any())).thenReturn(null);
 
-        mvc.perform(updatePost().content(toJson(getValidUserProfileInfo())))
+        mvc.perform(updatePost().content(toJson(getValidUserProfileInfoRequest())))
                 .andExpect(status().isOk());
 
         User expectedUser = getValidUser();
-        expectedUser.setEmail(null);
         expectedUser.setInterests(Collections.emptyList());
-        expectedUser.setPassword(null);
         expectedUser.setUserStatus(User.UserStatus.PROFILE_FILLED);
         expectedUser.setGender(Gender.MALE);
 
@@ -93,9 +92,8 @@ public class UserProfileControllerTest {
 
     @Test
     public void postUnExistingUserProfileUpdate_notFoundResponse() throws Exception {
-        when(userService.updateUserInfo(any())).thenThrow(new UserNotFoundException());
-
-        mvc.perform(updatePost().content(toJson(getValidUserProfileInfo())))
+        when(userService.findUserById(any())).thenThrow(new UserNotFoundException());
+        mvc.perform(updatePost().content(toJson(getValidUserProfileInfoRequest())))
                 .andExpect(status().isNotFound());
     }
 
@@ -113,22 +111,22 @@ public class UserProfileControllerTest {
     }
 
     public static Stream<Arguments> provideValidationErrorsArguments() {
-        UserProfileInfo withInvalidName = getValidUserProfileInfo();
+        UserProfileInfo withInvalidName = getValidUserProfileInfoRequest();
         withInvalidName.setName("_");
 
-        UserProfileInfo withInvalidSurname = getValidUserProfileInfo();
+        UserProfileInfo withInvalidSurname = getValidUserProfileInfoRequest();
         withInvalidSurname.setSurname("_");
 
-        UserProfileInfo withInvalidInterests = getValidUserProfileInfo();
+        UserProfileInfo withInvalidInterests = getValidUserProfileInfoRequest();
         withInvalidInterests.setInterests(null);
 
-        UserProfileInfo withoutDescription = getValidUserProfileInfo();
+        UserProfileInfo withoutDescription = getValidUserProfileInfoRequest();
         withoutDescription.setDescription(null);
 
-        UserProfileInfo withInvalidBirthday = getValidUserProfileInfo();
+        UserProfileInfo withInvalidBirthday = getValidUserProfileInfoRequest();
         withInvalidBirthday.setBirthday(null);
 
-        UserProfileInfo withInvalidPhone = getValidUserProfileInfo();
+        UserProfileInfo withInvalidPhone = getValidUserProfileInfoRequest();
         withInvalidPhone.setPhone(null);
 
         return Stream.of(
@@ -141,7 +139,7 @@ public class UserProfileControllerTest {
         );
     }
 
-    private static UserProfileInfo getValidUserProfileInfo() {
+    private static UserProfileInfo getValidUserProfileInfoRequest() {
         UserProfileInfo userProfileInfo = new UserProfileInfo();
         User validUser = getValidUser();
         userProfileInfo.setName(validUser.getName());

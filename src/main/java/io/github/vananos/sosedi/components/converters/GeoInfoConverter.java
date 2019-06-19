@@ -1,4 +1,10 @@
 package io.github.vananos.sosedi.components.converters;
 
-public class GeoInfoConverter {
+import io.github.vananos.sosedi.models.GeoInfo;
+
+public class GeoInfoConverter extends BaseJsonConverter<GeoInfo> {
+    @Override
+    protected Class<GeoInfo> getBeanClass() {
+        return GeoInfo.class;
+    }
 }

@@ -1,10 +1,7 @@
 package io.github.vananos.sosedi.models.dto.ad;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.github.vananos.sosedi.models.Attitude;
-import io.github.vananos.sosedi.models.Convenience;
-import io.github.vananos.sosedi.models.Gender;
-import io.github.vananos.sosedi.models.RoomType;
+import io.github.vananos.sosedi.models.*;
 import lombok.Data;
 
 import java.util.List;
@@ -22,7 +19,7 @@ public class AdResponse {
     private Boolean landLord;
 
     @JsonProperty("placeId")
-    private Object placeId;
+    private GeoInfo placeId;
 
     @JsonProperty("gender")
     private Gender gender;

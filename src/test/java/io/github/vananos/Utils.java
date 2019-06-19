@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import io.github.vananos.sosedi.models.*;
+import io.github.vananos.sosedi.models.GeoInfo.Coordinates;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -100,8 +101,17 @@ public class Utils {
         ad.setMinAge(18);
         ad.setMaxAge(40);
         ad.setRentPay(15000);
-        ad.setPlaceId("SPB");
+        ad.setPlaceId(getValidGeoInfo());
         ad.setRoomType(asList(SINGLE));
         return ad;
+    }
+
+    public static GeoInfo getValidGeoInfo() {
+        GeoInfo geoInfo = new GeoInfo();
+        geoInfo.setAddress("SPB");
+        geoInfo.setLatLng(new Coordinates());
+        geoInfo.getLatLng().setLat(12.23);
+        geoInfo.getLatLng().setLng(15.48);
+        return geoInfo;
     }
 }

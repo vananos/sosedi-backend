@@ -8,31 +8,22 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.function.Predicate;
 
 //TODO: improve me
 @Component
 public class SimpleMatchingStrategyImpl implements MatchingStrategy {
 
-    private User targetUser;
 
     @Override
-    public Predicate<User> matchWithUser(User user) {
-        SimpleMatchingStrategyImpl strategy = new SimpleMatchingStrategyImpl();
-        strategy.targetUser = user;
-
-        return strategy::isSuitableFor;
-    }
-
-    private boolean isSuitableFor(User user) {
+    public boolean matches(User targetUser, User secondUser) {
         Advertisement targetAd = targetUser.getAdvertisement();
         int targetUserAge = calculateAge(targetUser.getBirthday());
-        int userAge = calculateAge(user.getBirthday());
-        Advertisement userAd = user.getAdvertisement();
+        int userAge = calculateAge(secondUser.getBirthday());
+        Advertisement userAd = secondUser.getAdvertisement();
         Advertisement targetUserAd = targetUser.getAdvertisement();
 
         return isSuitableGender(userAd.getGender(), targetUser.getGender()) &&
-                isSuitableGender(targetUserAd.getGender(), user.getGender()) &&
+                isSuitableGender(targetUserAd.getGender(), secondUser.getGender()) &&
 
                 (targetAd.getPlaceId().equals(userAd.getPlaceId())) &&
 
@@ -47,7 +38,7 @@ public class SimpleMatchingStrategyImpl implements MatchingStrategy {
 
                 (userAd.getRoomType().stream().anyMatch(roomType -> targetAd.getRoomType().contains(roomType))) &&
 
-                !user.getId().equals(targetUser.getId());
+                !secondUser.getId().equals(targetUser.getId());
     }
 
     private boolean isSuitableGender(Gender adGender, Gender userGender) {

@@ -1,6 +1,7 @@
 package io.github.vananos.sosedi.models;
 
-import io.github.vananos.sosedi.components.ListConverter;
+import io.github.vananos.sosedi.components.converters.GeoInfoConverter;
+import io.github.vananos.sosedi.components.converters.ListConverter;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -22,8 +23,9 @@ public class Advertisement {
     @Column(name = "LANDLORD")
     private Boolean landlord;
 
-    @Column(name = "PLACE_ID")
-    private String placeId;
+    @Column(name = "PLACE_ID", columnDefinition = "jsonb")
+    @Convert(converter = GeoInfoConverter.class)
+    private GeoInfo placeId;
 
     @Column(name = "SMOKING")
     @Enumerated(EnumType.STRING)

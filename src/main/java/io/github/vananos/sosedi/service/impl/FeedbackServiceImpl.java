@@ -5,6 +5,7 @@ import io.github.vananos.sosedi.service.EmailService;
 import io.github.vananos.sosedi.service.FeedbackService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
@@ -20,22 +21,25 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     private EmailService emailService;
 
-    public FeedbackServiceImpl(EmailService emailService, TemplateEngine templateEngine) {
+    private TaskExecutor taskExecutor;
+
+    public FeedbackServiceImpl(EmailService emailService, TemplateEngine templateEngine, TaskExecutor taskExecutor) {
         this.emailService = emailService;
         this.templateEngine = templateEngine;
+        this.taskExecutor = taskExecutor;
     }
 
     @Override
     public void processFeedback(FeedbackRequest feedbackRequest) {
-        log.info("getting feedback {}", feedbackRequest.toString());
+        log.info("feedback {}", feedbackRequest.toString());
 
-        new Thread(
+        taskExecutor.execute(
                 () -> {
                     Context ctx = new Context();
                     ctx.setVariable("feedback", feedbackRequest);
                     String message = templateEngine.process("feedback", ctx);
                     emailService.sendEmail(adminEmail, "feedback", message);
                 }
-        ).start();
+        );
     }
 }

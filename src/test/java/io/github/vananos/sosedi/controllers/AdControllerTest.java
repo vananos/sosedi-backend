@@ -89,7 +89,7 @@ public class AdControllerTest {
         adRequest.setMinAge(18);
         adRequest.setMaxAge(40);
         adRequest.setRentPay(15000);
-        adRequest.setPlaceId("SPB");
+        adRequest.setPlaceId(getValidGeoInfo());
         adRequest.setRoomType(asList(SINGLE));
         return adRequest;
     }
@@ -106,7 +106,7 @@ public class AdControllerTest {
         adResponse.setMinAge(18);
         adResponse.setMaxAge(40);
         adResponse.setRentPay(15000);
-        adResponse.setPlaceId("SPB");
+        adResponse.setPlaceId(getValidGeoInfo());
         adResponse.setConveniences(asList(Convenience.TV));
         adResponse.setRoomType(asList(SINGLE));
         adResponse.setConveniences(asList(Convenience.TV));

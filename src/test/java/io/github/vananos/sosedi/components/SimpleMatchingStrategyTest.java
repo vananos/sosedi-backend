@@ -12,8 +12,7 @@ import java.util.function.Consumer;
 import java.util.stream.LongStream;
 import java.util.stream.Stream;
 
-import static io.github.vananos.Utils.getValidAdvertisement;
-import static io.github.vananos.Utils.getValidUser;
+import static io.github.vananos.Utils.*;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -52,7 +51,8 @@ public class SimpleMatchingStrategyTest {
         });
 
         check(targetUser, allGenderUsers,
-                allGenderUsers.stream().filter(u -> u.getGender() == Gender.FEMALE));
+                allGenderUsers.stream().filter(u -> u.getGender() == Gender.FEMALE)
+        );
     }
 
     @Test
@@ -112,18 +112,23 @@ public class SimpleMatchingStrategyTest {
     public void samePlaceFilterTest() {
         User spbUser = getValidUser();
         spbUser.setAdvertisement(getValidAdvertisement());
-        spbUser.getAdvertisement().setPlaceId("SPB");
+        spbUser.getAdvertisement().setPlaceId(getValidGeoInfo());
 
         List<User> usersFromDifferentPlaces = getUsers(3, user -> {
             if (user.getId() == 2) {
-                user.getAdvertisement().setPlaceId("SPB");
+                user.getAdvertisement().setPlaceId(getValidGeoInfo());
             } else {
-                user.getAdvertisement().setPlaceId("MOSCOW");
+                GeoInfo geoInfo = getValidGeoInfo();
+                geoInfo.setAddress("MOSCOW");
+                geoInfo.getLatLng().setLng(0.4);
+                geoInfo.getLatLng().setLat(5.6);
+                user.getAdvertisement().setPlaceId(geoInfo);
             }
         });
 
         check(spbUser, usersFromDifferentPlaces,
-                usersFromDifferentPlaces.stream().filter(u -> u.getId().equals(2L)));
+                usersFromDifferentPlaces.stream().filter(u -> u.getId().equals(2L))
+        );
     }
 
     @Test
@@ -138,7 +143,8 @@ public class SimpleMatchingStrategyTest {
         });
 
         check(notSmokerUser, usersWithDifferentSmokingAttitude,
-                usersWithDifferentSmokingAttitude.stream().filter(u -> u.getAdvertisement().getSmoking() != Attitude.GOOD));
+                usersWithDifferentSmokingAttitude.stream().filter(u -> u.getAdvertisement().getSmoking() != Attitude.GOOD)
+        );
     }
 
     @Test
@@ -153,7 +159,8 @@ public class SimpleMatchingStrategyTest {
         });
 
         check(userDontLikeAnimals, usersWithDifferentAnimalAttitude,
-                usersWithDifferentAnimalAttitude.stream().filter(u -> u.getAdvertisement().getAnimals() != Attitude.GOOD));
+                usersWithDifferentAnimalAttitude.stream().filter(u -> u.getAdvertisement().getAnimals() != Attitude.GOOD)
+        );
     }
 
     @Test
@@ -202,10 +209,12 @@ public class SimpleMatchingStrategyTest {
         userWithSuitableAgeButUnsuitablePreferences.getAdvertisement().setMaxAge(50);
 
         List<User> usersWithDifferentAgeAndAgePreferences = asList(userWithSamePreferencesAndAge,
-                userWithSamePreferencesUnsuitableAge, userWithSuitableAgeButUnsuitablePreferences);
+                userWithSamePreferencesUnsuitableAge, userWithSuitableAgeButUnsuitablePreferences
+        );
 
         check(youngUser, usersWithDifferentAgeAndAgePreferences,
-                Stream.of(userWithSamePreferencesAndAge));
+                Stream.of(userWithSamePreferencesAndAge)
+        );
     }
 
     @Test
@@ -245,14 +254,15 @@ public class SimpleMatchingStrategyTest {
                                 u -> u.getAdvertisement()
                                         .getRoomType()
                                         .stream()
-                                        .anyMatch(r -> targetUser.getAdvertisement().getRoomType().contains(r))));
+                                        .anyMatch(r -> targetUser.getAdvertisement().getRoomType().contains(r)))
+        );
     }
 
     private void check(User targetUser, List<User> users, Stream<User> expectedResult)
     {
         assertThat(
                 users.stream()
-                        .filter(matchingStrategy.matchWithUser(targetUser))
+                        .filter(other -> matchingStrategy.matches(targetUser, other))
                         .collect(toList())
         ).containsOnlyElementsOf(expectedResult.collect(toList()));
     }

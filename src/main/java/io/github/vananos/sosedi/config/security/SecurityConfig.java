@@ -1,6 +1,7 @@
 package io.github.vananos.sosedi.config.security;
 
 import io.github.vananos.sosedi.security.CustomPermissionEvaluator;
+import io.github.vananos.sosedi.service.MatchService;
 import io.github.vananos.sosedi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,6 +34,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private AuthenticationSuccessHandler authenticationSuccessHandler;
     private SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
     private UserService userService;
+    private MatchService matchService;
 
     @Value("${sosedi.cors.dev}")
     private Boolean isCorsDev;
@@ -43,12 +45,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             UserDetailsService userDetailsService,
             AuthenticationSuccessHandler authenticationSuccessHandler,
             UserService userService,
+            MatchService matchService,
             PasswordEncoder passwordEncoder)
     {
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
         this.userService = userService;
+        this.matchService = matchService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -100,6 +104,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PermissionEvaluator customPermissionEvaluator() {
-        return new CustomPermissionEvaluator(userService);
+        return new CustomPermissionEvaluator(userService, matchService);
     }
 }

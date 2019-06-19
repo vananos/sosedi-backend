@@ -70,15 +70,6 @@ public class UserServiceTest {
         });
     }
 
-    @Test
-    public void updateUnExistingUser_userNotFoundError() {
-        when(userRepository.findById(any())).thenReturn(Optional.empty());
-
-        assertThrows(UserNotFoundException.class, () -> {
-            userService.updateUserInfo(getValidUser());
-        });
-    }
-
     private User getValidUser() {
         User expectedUser = new User();
         expectedUser.setId(1L);

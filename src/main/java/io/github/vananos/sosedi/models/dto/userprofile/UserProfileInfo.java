@@ -55,4 +55,7 @@ public class UserProfileInfo {
     @JsonProperty("gender")
     @NotNull
     private Gender gender;
+
+    @JsonProperty("age")
+    private Integer age;
 }

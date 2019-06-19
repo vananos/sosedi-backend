@@ -1,6 +1,6 @@
 package io.github.vananos.sosedi.models;
 
-import io.github.vananos.sosedi.components.ListConverter;
+import io.github.vananos.sosedi.components.converters.ListConverter;
 import lombok.Data;
 
 import javax.persistence.*;

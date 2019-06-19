@@ -1,8 +1,11 @@
 package io.github.vananos.sosedi.security;
 
+import io.github.vananos.sosedi.models.Match;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.ad.AdRequest;
+import io.github.vananos.sosedi.models.dto.matching.MatchUpdateRequest;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
+import io.github.vananos.sosedi.service.MatchService;
 import io.github.vananos.sosedi.service.UserService;
 import lombok.Data;
 import lombok.experimental.Accessors;
@@ -13,14 +16,17 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 public class CustomPermissionEvaluator implements PermissionEvaluator {
 
     private UserService userService;
+    private MatchService matchService;
 
     @Autowired
-    public CustomPermissionEvaluator(UserService userService) {
+    public CustomPermissionEvaluator(UserService userService, MatchService matchService) {
         this.userService = userService;
+        this.matchService = matchService;
     }
 
     @Data
@@ -37,11 +43,17 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
     }
 
     @Override
-    public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType, Object permission) {
-        return resolvePermission(authentication, permission, new TargetObjectInfo().targetType(targetType).targetId(targetId));
+    public boolean hasPermission(Authentication authentication, Serializable targetId, String targetType,
+                                 Object permission)
+    {
+        return resolvePermission(authentication, permission,
+                new TargetObjectInfo().targetType(targetType).targetId(targetId)
+        );
     }
 
-    private boolean resolvePermission(Authentication authentication, Object permission, TargetObjectInfo targetObjectInfo) {
+    private boolean resolvePermission(Authentication authentication, Object permission,
+                                      TargetObjectInfo targetObjectInfo)
+    {
         if (!(permission instanceof String)) {
             throw new IllegalArgumentException("Only permissions of type String are supported, permission type: " + permission.getClass());
         }
@@ -62,6 +74,18 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
                             .getAdvertisement()
                             .getId()
                             .equals(adRequest.getUserId());
+        }
+
+        if (permissionType.equals("write") && targetObjectInfo.targetObject instanceof MatchUpdateRequest) {
+            MatchUpdateRequest matchUpdateRequest = (MatchUpdateRequest) targetObjectInfo.targetObject;
+            Optional<Match> match = matchService
+                    .getMatch(matchUpdateRequest.getMatchId());
+
+            return match.isPresent() && (
+                    match.map(m ->
+                            m.getFirstUser().getId().equals(user.getId()) || m.getSecondUser().getId().equals(user.getId()))
+                            .get()
+            );
         }
 
         if (permissionType.equals("read") && targetObjectInfo.targetType != null) {
