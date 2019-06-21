@@ -103,7 +103,6 @@ public class RegistrationControllerTest {
 
         RegistrationRequest withWeakPassword = validUserRegistrationRequest();
         withWeakPassword.setPassword("weakPassword");
-        withWeakPassword.setPasswordConfirmation("weakPassword");
 
         return Stream.of(
                 Arguments.of(withInvalidName, "name"),
@@ -116,7 +115,6 @@ public class RegistrationControllerTest {
     @Test
     public void register_passwordConfirmationDoNotMatch() throws Exception {
         RegistrationRequest registrationRequest = validUserRegistrationRequest();
-        registrationRequest.setPasswordConfirmation("anotherPassword190_");
 
         mvc.perform(
                 registrationPost()
@@ -136,7 +134,6 @@ public class RegistrationControllerTest {
         RegistrationRequest registrationRequest = new RegistrationRequest();
         registrationRequest.setEmail("test@gmail.com");
         registrationRequest.setPassword("VeryStrongPassword_130");
-        registrationRequest.setPasswordConfirmation("VeryStrongPassword_130");
         registrationRequest.setName("username");
         registrationRequest.setSurname("usersurname");
         return registrationRequest;
