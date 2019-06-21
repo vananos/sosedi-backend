@@ -42,10 +42,16 @@ public class AuthenticationSuccessHandlerImpl extends SimpleUrlAuthenticationSuc
 
         UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
         User user = userDetails.getUser();
+
         Map<String, Object> responseObj = new HashMap<>();
         responseObj.put("userId", user.getId());
         responseObj.put("isNewUser", user.getUserStatus() != User.UserStatus.PROFILE_FILLED);
+        responseObj.put("userName", user.getName());
+        responseObj.put("email", user.getEmail());
 
+
+        response.setContentType("text/html; charset=UTF-8");
+        response.setCharacterEncoding("UTF-8");
         PrintWriter printWriter = response.getWriter();
         printWriter.print(objectMapper.writeValueAsString(responseObj));
 

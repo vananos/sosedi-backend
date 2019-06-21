@@ -1,16 +1,57 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>Confirmation</title>
+    <style>
+        footer {
+            margin-top: 50px;
+        }
+    </style>
+    <link href="https://fonts.googleapis.com/css?family=Ubuntu&display=swap" rel="stylesheet">
 </head>
-<body>
 
-<span th:text="${username}">Пользователь</span>, для подтверждения аккаунта, пожалуйста, пройдите по <a
-        th:href="${confirmationLink}">ссылке</a>
-<p>В случае, если вы не регистрировались на сайте, пожалуйста, пройдите по ссылке <a
-        th:href="${cancelConfirmationLink}">ссылке</a></p>
+<body style="background: #E9E7E7;margin: 0;">
+<table cellpadding="0" cellspacing="0" width="100%"
+       style="background: white; padding: 25px; max-width: 450px; position: relative; margin: 15px auto;">
+    <tr>
+        <td style="height: 50px;"></td>
+    </tr>
+    <tr>
+        <td
+                style="position: absolute; left: 0;width:100%;height: 86px;background-color: #DEAA5D;text-align: center; color: white; font-size: 20px; line-height: 86px;">
+            SOSEDI
+        </td>
+    </tr>
+    <tr>
+        <td>
+            <h1 style="font-size: 20px;display: block;text-align: center;margin: 55px 0;font-weight: 400;">Добро
+                пожаловать!</h1>
+            <p class="main-msg">
+                Здравствуйте, <span th:text="${username}">Лиза!</span><br><br>
+                Ваша регистрация прошла успешно! Для продолжения работы подтвердите свой
+                электронный
+                адрес.
+            </p>
+            <a th:href="${confirmationLink}" href="#"
+               style="display: block;background-color: #43A4AE; margin: 0 auto;width: 280px;height: 48px;text-align: center;color: white !important;text-decoration: none !important;line-height: 48px;">Подтвердить
+                e-mail</a>
+            <p style="margin-top: 30px;">
+                Если это были не вы, пожалуйста сообщите нам об этом перейдя по
+                <a th:href="${cancelConfirmationLink}" href="https//sosedi.com/login/notmyaccount"
+                   style="margin-top: 35px;">
+                    ссылке</a>
+            </p>
+
+            <footer>
+                С уважением, <br> Служба технической поддержки SOSEDI
+            </footer>
+        </td>
+    </tr>
+</table>
 </body>
+
 </html>

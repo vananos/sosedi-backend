@@ -19,7 +19,7 @@ public class FeedbackRequest {
     @Size(min = 2, max = 15)
     private String name;
 
-    @JsonProperty("message")
+    @JsonProperty("question")
     @Size(max = 1024)
     private String message;
 }
