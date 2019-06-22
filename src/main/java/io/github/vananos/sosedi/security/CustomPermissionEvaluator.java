@@ -4,6 +4,8 @@ import io.github.vananos.sosedi.models.Match;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.ad.AdRequest;
 import io.github.vananos.sosedi.models.dto.matching.MatchUpdateRequest;
+import io.github.vananos.sosedi.models.dto.settings.ChangeNotificationSettingsRequest;
+import io.github.vananos.sosedi.models.dto.settings.ChangePasswordRequest;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
 import io.github.vananos.sosedi.service.MatchService;
 import io.github.vananos.sosedi.service.UserService;
@@ -86,6 +88,18 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
                             m.getFirstUser().getId().equals(user.getId()) || m.getSecondUser().getId().equals(user.getId()))
                             .get()
             );
+        }
+
+        if (permissionType.equals("write") && targetObjectInfo.targetObject instanceof ChangePasswordRequest) {
+            ChangePasswordRequest changePasswordRequest = (ChangePasswordRequest) targetObjectInfo.targetObject;
+            return changePasswordRequest.getUserId().equals(user.getId());
+        }
+
+        if (permissionType.equals("write") && targetObjectInfo.targetObject instanceof ChangeNotificationSettingsRequest) {
+            ChangeNotificationSettingsRequest changeNotificationSettingsRequest =
+                    (ChangeNotificationSettingsRequest) targetObjectInfo.targetObject;
+
+            return changeNotificationSettingsRequest.getUserId().equals(user.getId());
         }
 
         if (permissionType.equals("read") && targetObjectInfo.targetType != null) {

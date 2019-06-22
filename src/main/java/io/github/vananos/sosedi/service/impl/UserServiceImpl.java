@@ -2,6 +2,8 @@ package io.github.vananos.sosedi.service.impl;
 
 import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
 import io.github.vananos.sosedi.exceptions.UserNotFoundException;
+import io.github.vananos.sosedi.models.NotificationFrequency;
+import io.github.vananos.sosedi.models.Notifications;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.repository.UserRepository;
 import io.github.vananos.sosedi.service.MatchService;
@@ -42,6 +44,9 @@ public class UserServiceImpl implements UserService {
         try {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
             user.setEmailConfirmationId(userConfirmationService.generateLink());
+            Notifications notifications = new Notifications();
+            notifications.setNotificationFrequency(NotificationFrequency.ONE_DAY);
+            user.setNotifications(notifications);
             userRepository.save(user);
             taskExecutor.execute(() -> userConfirmationService.sendConfirmationLetter(user));
         } catch (DataIntegrityViolationException e) {
@@ -65,5 +70,12 @@ public class UserServiceImpl implements UserService {
     @Override
     public void setAvatarForUser(String avatar, Long userId) {
         userRepository.updateAvatarForUser(avatar, userId);
+    }
+
+    @Override
+    public void updateUserPassword(Long userId, String password) {
+        User user = findUserById(userId);
+        user.setPassword(passwordEncoder.encode(password));
+        updateUserInfo(user);
     }
 }

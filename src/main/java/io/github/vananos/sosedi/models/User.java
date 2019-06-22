@@ -60,6 +60,10 @@ public class User {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
+    @JoinColumn(name = "NOTIFICATION_ID")
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Notifications notifications;
+
     public enum UserStatus {
         EMAIL_UNCONFIRMED,
         EMAIL_CONFIRMED,

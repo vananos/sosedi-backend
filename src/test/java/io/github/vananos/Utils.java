@@ -85,6 +85,9 @@ public class Utils {
         expectedUser.setPhone("+7 (999) 222 33 44");
         expectedUser.setInterests(Collections.emptyList());
         expectedUser.setGender(Gender.MALE);
+        Notifications notifications = new Notifications();
+        notifications.setNotificationFrequency(NotificationFrequency.ONE_DAY);
+        expectedUser.setNotifications(notifications);
         return expectedUser;
     }
 
