@@ -5,6 +5,7 @@ import io.github.vananos.sosedi.exceptions.UserNotFoundException;
 import io.github.vananos.sosedi.models.NotificationFrequency;
 import io.github.vananos.sosedi.models.Notifications;
 import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.User.UserStatus;
 import io.github.vananos.sosedi.repository.UserRepository;
 import io.github.vananos.sosedi.service.MatchService;
 import io.github.vananos.sosedi.service.UserConfirmationService;
@@ -58,7 +59,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public User updateUserInfo(User user) {
         user = userRepository.save(user);
-        matchService.updateMatchesForUser(user);
+        if (user.getUserStatus() == UserStatus.AD_FILLED) {
+            matchService.updateMatchesForUser(user);
+        }
         return user;
     }
 
@@ -76,6 +79,13 @@ public class UserServiceImpl implements UserService {
     public void updateUserPassword(Long userId, String password) {
         User user = findUserById(userId);
         user.setPassword(passwordEncoder.encode(password));
+        updateUserInfo(user);
+    }
+
+    @Override
+    public void deleteAccount(Long userId) {
+        User user = findUserById(userId);
+        user.setEmail(user.getEmail() + "_del_" + System.nanoTime());
         updateUserInfo(user);
     }
 }

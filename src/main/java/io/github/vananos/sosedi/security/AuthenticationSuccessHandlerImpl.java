@@ -3,7 +3,6 @@ package io.github.vananos.sosedi.security;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.vananos.sosedi.models.User;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -24,13 +23,7 @@ import java.util.Map;
 @Slf4j
 public class AuthenticationSuccessHandlerImpl extends SimpleUrlAuthenticationSuccessHandler {
 
-    private ObjectMapper objectMapper;
     private RequestCache requestCache = new HttpSessionRequestCache();
-
-    @Autowired
-    public AuthenticationSuccessHandlerImpl(ObjectMapper objectMapper) {
-        this.objectMapper = objectMapper;
-    }
 
     @Override
     @SuppressWarnings("unchecked")
@@ -45,15 +38,14 @@ public class AuthenticationSuccessHandlerImpl extends SimpleUrlAuthenticationSuc
 
         Map<String, Object> responseObj = new HashMap<>();
         responseObj.put("userId", user.getId());
-        responseObj.put("isNewUser", user.getUserStatus() != User.UserStatus.PROFILE_FILLED);
+        responseObj.put("userStatus", user.getUserStatus());
         responseObj.put("userName", user.getName());
         responseObj.put("email", user.getEmail());
 
-
-        response.setContentType("text/html; charset=UTF-8");
+        response.setContentType("application/json");
         response.setCharacterEncoding("UTF-8");
         PrintWriter printWriter = response.getWriter();
-        printWriter.print(objectMapper.writeValueAsString(responseObj));
+        printWriter.print(new ObjectMapper().writeValueAsString(responseObj));
 
         if (savedRequest == null) {
             clearAuthenticationAttributes(request);

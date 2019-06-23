@@ -1,7 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
-import io.github.vananos.sosedi.exceptions.UserNotFoundException;
 import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.User.UserStatus;
 import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
 import io.github.vananos.sosedi.service.UserService;
@@ -32,7 +32,7 @@ public class UserProfileController {
 
         UserProfileInfo userProfileInfo = new ModelMapper().map(user, UserProfileInfo.class);
 
-        userProfileInfo.setIsNewUser(user.getUserStatus() != User.UserStatus.PROFILE_FILLED);
+        userProfileInfo.setIsNewUser(user.getUserStatus() == UserStatus.EMAIL_CONFIRMED);
 
         return ResponseEntity.ok(new BaseResponse().data(userProfileInfo));
     }
@@ -47,13 +47,10 @@ public class UserProfileController {
         assertHasNoErrors(bindingResult);
         User user = userService.findUserById(userProfileInfo.getId());
         new ModelMapper().map(userProfileInfo, user);
-        user.setUserStatus(User.UserStatus.PROFILE_FILLED);
+        if (user.getUserStatus() == UserStatus.EMAIL_CONFIRMED) {
+            user.setUserStatus(User.UserStatus.PROFILE_FILLED);
+        }
         userService.updateUserInfo(user);
         return ResponseEntity.ok(new BaseResponse());
-    }
-
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity userNotFoundExceptionHandler() {
-        return ResponseEntity.notFound().build();
     }
 }

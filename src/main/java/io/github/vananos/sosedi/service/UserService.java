@@ -12,4 +12,6 @@ public interface UserService {
     void setAvatarForUser(String avatar, Long userId);
 
     void updateUserPassword(Long userId, String password);
+
+    void deleteAccount(Long userId);
 }

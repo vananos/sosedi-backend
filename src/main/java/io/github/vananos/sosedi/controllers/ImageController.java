@@ -1,5 +1,6 @@
 package io.github.vananos.sosedi.controllers;
 
+import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
 import io.github.vananos.sosedi.service.FileService;
 import io.github.vananos.sosedi.service.UserService;
@@ -7,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -65,10 +65,15 @@ public class ImageController {
         return Optional.of(image);
     }
 
-    @DeleteMapping("/photo")
-    @PreAuthorize("hasPermission(#photoName, 'deletePhoto')")
-    public ResponseEntity<BaseResponse> deletePhoto(@RequestParam("name") String photoName) {
-        fileService.deleteFile(photoName);
+    @PostMapping("/deleteavatar")
+    @PreAuthorize("hasPermission(#userId, 'deleteAvatar')")
+    public ResponseEntity<BaseResponse> deleteAvatar(@RequestParam("userid") Long userId) {
+        User user = userService.findUserById(userId);
+        if (user.getAvatar() != null) {
+            fileService.deleteFile(user.getAvatar());
+            user.setAvatar(null);
+            userService.updateUserInfo(user);
+        }
         return ResponseEntity.ok().build();
     }
 }

@@ -15,7 +15,7 @@ public class Match {
     @Column(name = "ID")
     private Long matchId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "FIRST_USER_ID")
     private User firstUser;
 
@@ -23,7 +23,7 @@ public class Match {
     @Enumerated(EnumType.STRING)
     private MatchState firstUserState = MatchState.NEW;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "SECOND_USER_ID")
     private User secondUser;
 

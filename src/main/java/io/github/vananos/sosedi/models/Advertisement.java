@@ -1,7 +1,8 @@
 package io.github.vananos.sosedi.models;
 
+import io.github.vananos.sosedi.components.converters.ConvenienceListConverter;
 import io.github.vananos.sosedi.components.converters.GeoInfoConverter;
-import io.github.vananos.sosedi.components.converters.ListConverter;
+import io.github.vananos.sosedi.components.converters.RoomTypeListConverter;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -42,11 +43,11 @@ public class Advertisement {
     private Integer maxAge;
 
     @Column(name = "ROOM_TYPE", columnDefinition = "jsonb")
-    @Convert(converter = ListConverter.class)
+    @Convert(converter = RoomTypeListConverter.class)
     private List<RoomType> roomType;
 
     @Column(name = "CONVENIENCES", columnDefinition = "jsonb")
-    @Convert(converter = ListConverter.class)
+    @Convert(converter = ConvenienceListConverter.class)
     private List<Convenience> conveniences;
 
     @Column(name = "RENT_PAY")

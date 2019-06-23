@@ -16,6 +16,7 @@ public class Notifications {
     private Long id;
 
     @Column(name = "NOTIFICATION_FREQUENCY")
+    @Enumerated(EnumType.STRING)
     private NotificationFrequency notificationFrequency;
 
     @Column(name = "LAST_SENT", columnDefinition = "TIMESTAMP")

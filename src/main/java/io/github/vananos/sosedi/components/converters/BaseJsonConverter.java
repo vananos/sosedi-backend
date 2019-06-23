@@ -1,15 +1,16 @@
 package io.github.vananos.sosedi.components.converters;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import javax.persistence.AttributeConverter;
 import java.io.IOException;
 
 public abstract class BaseJsonConverter<T> implements AttributeConverter<T, String> {
-    private Class<T> beanClass = getBeanClass();
+    private TypeReference<T> typeReference = getTypeReference();
 
-    abstract protected Class<T> getBeanClass();
+    abstract protected TypeReference<T> getTypeReference();
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
@@ -25,7 +26,7 @@ public abstract class BaseJsonConverter<T> implements AttributeConverter<T, Stri
     @Override
     public T convertToEntityAttribute(String dbData) {
         try {
-            return objectMapper.readValue(dbData, beanClass);
+            return objectMapper.readValue(dbData, typeReference);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

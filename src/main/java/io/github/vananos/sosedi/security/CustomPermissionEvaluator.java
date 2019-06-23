@@ -122,8 +122,8 @@ public class CustomPermissionEvaluator implements PermissionEvaluator {
             return request.getParameter("userId").equals(user.getId().toString());
         }
 
-        if (permissionType.equals("deletePhoto")) {
-            return targetObjectInfo.targetId.equals(user.getAvatar());
+        if (permissionType.equals("deleteAvatar")) {
+            return targetObjectInfo.targetObject.equals(user.getId());
         }
 
         throw new UnsupportedOperationException("Couldn't resolve permission of type: " + permissionType);

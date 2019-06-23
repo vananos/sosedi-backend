@@ -1,6 +1,6 @@
 package io.github.vananos.sosedi.models;
 
-import io.github.vananos.sosedi.components.converters.ListConverter;
+import io.github.vananos.sosedi.components.converters.InterestListConverter;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -39,7 +39,7 @@ public class User {
     private String phone;
 
     @Column(name = "INTERESTS", columnDefinition = "jsonb")
-    @Convert(converter = ListConverter.class)
+    @Convert(converter = InterestListConverter.class)
     private List<Interests> interests;
 
     @Column(name = "description")
@@ -67,6 +67,7 @@ public class User {
     public enum UserStatus {
         EMAIL_UNCONFIRMED,
         EMAIL_CONFIRMED,
-        PROFILE_FILLED
+        PROFILE_FILLED,
+        AD_FILLED
     }
 }

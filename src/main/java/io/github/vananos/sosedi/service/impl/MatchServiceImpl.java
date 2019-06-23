@@ -5,6 +5,7 @@ import io.github.vananos.sosedi.models.Match;
 import io.github.vananos.sosedi.models.Match.MatchState;
 import io.github.vananos.sosedi.models.MatchProcessorTask;
 import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.User.UserStatus;
 import io.github.vananos.sosedi.models.dto.matching.MatchUpdateRequest;
 import io.github.vananos.sosedi.models.dto.matching.MatchUpdateRequest.MatchUpdateAction;
 import io.github.vananos.sosedi.repository.MatchProcessorTaskRepository;
@@ -105,6 +106,7 @@ public class MatchServiceImpl implements MatchService {
 
                     userRepository.findAll()
                             .stream()
+                            .filter(secondUser -> secondUser.getUserStatus() == UserStatus.AD_FILLED)
                             .filter(secondUser -> matchingStrategy.matches(matchProcessorTask.getUser(), secondUser))
                             .map(user -> {
                                 Match match = new Match();

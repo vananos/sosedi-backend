@@ -15,6 +15,8 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.session.SessionRegistry;
+import org.springframework.security.core.session.SessionRegistryImpl;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
@@ -70,12 +72,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         }
         http.csrf().disable();
 
+        http.sessionManagement()
+                .maximumSessions(10)
+                .sessionRegistry(sessionRegistry());
+
         http.exceptionHandling()
                 .authenticationEntryPoint(authenticationEntryPoint)
                 .and()
                 .authorizeRequests()
                 .antMatchers("/login", "/register", "/confirmation*", "/feedback", "/resetpassword",
-                        "/requestreset")
+                        "/requestreset"
+                )
                 .permitAll()
                 .antMatchers("/*").authenticated()
                 .and()
@@ -106,5 +113,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PermissionEvaluator customPermissionEvaluator() {
         return new CustomPermissionEvaluator(userService, matchService);
+    }
+
+    @Bean
+    public SessionRegistry sessionRegistry() {
+        return new SessionRegistryImpl();
     }
 }

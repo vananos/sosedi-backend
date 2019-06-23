@@ -2,6 +2,7 @@ package io.github.vananos.sosedi.service.impl;
 
 import io.github.vananos.sosedi.models.Advertisement;
 import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.User.UserStatus;
 import io.github.vananos.sosedi.repository.AdRepository;
 import io.github.vananos.sosedi.service.AdService;
 import io.github.vananos.sosedi.service.UserService;
@@ -28,6 +29,7 @@ public class AdServiceImpl implements AdService {
     public Advertisement saveAdForUser(Long userId, Advertisement ad) {
         User user = userService.findUserById(userId);
         user.setAdvertisement(ad);
+        user.setUserStatus(UserStatus.AD_FILLED);
         user = userService.updateUserInfo(user);
         return user.getAdvertisement();
     }

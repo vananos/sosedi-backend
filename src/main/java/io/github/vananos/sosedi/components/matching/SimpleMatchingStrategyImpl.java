@@ -16,29 +16,25 @@ public class SimpleMatchingStrategyImpl implements MatchingStrategy {
 
     @Override
     public boolean matches(User targetUser, User secondUser) {
-        Advertisement targetAd = targetUser.getAdvertisement();
         int targetUserAge = calculateAge(targetUser.getBirthday());
         int userAge = calculateAge(secondUser.getBirthday());
         Advertisement userAd = secondUser.getAdvertisement();
         Advertisement targetUserAd = targetUser.getAdvertisement();
 
-        return isSuitableGender(userAd.getGender(), targetUser.getGender()) &&
+        return !secondUser.getId().equals(targetUser.getId()) &&
+                isSuitableGender(userAd.getGender(), targetUser.getGender()) &&
                 isSuitableGender(targetUserAd.getGender(), secondUser.getGender()) &&
 
-                (targetAd.getPlaceId().equals(userAd.getPlaceId())) &&
+                (targetUserAd.getPlaceId().equals(userAd.getPlaceId())) &&
 
-                isSuitableAttitude(targetAd.getSmoking(), userAd.getSmoking()) &&
-                isSuitableAttitude(targetAd.getAnimals(), userAd.getAnimals()) &&
+                isSuitableAttitude(targetUserAd.getSmoking(), userAd.getSmoking()) &&
+                isSuitableAttitude(targetUserAd.getAnimals(), userAd.getAnimals()) &&
 
                 (targetUserAge >= userAd.getMinAge() && targetUserAge <= userAd.getMaxAge()) &&
 
                 (userAge >= targetUserAd.getMinAge() && userAge <= targetUserAd.getMaxAge()) &&
-
-                !(targetAd.getLandlord() && userAd.getLandlord()) &&
-
-                (userAd.getRoomType().stream().anyMatch(roomType -> targetAd.getRoomType().contains(roomType))) &&
-
-                !secondUser.getId().equals(targetUser.getId());
+                (userAd.getRoomType().stream().anyMatch(roomType -> targetUserAd.getRoomType().contains(roomType))) &&
+                !(targetUserAd.getLandlord() && userAd.getLandlord());
     }
 
     private boolean isSuitableGender(Gender adGender, Gender userGender) {
