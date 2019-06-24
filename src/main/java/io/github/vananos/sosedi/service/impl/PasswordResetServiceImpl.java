@@ -87,7 +87,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
         taskExecutor.execute(() -> {
             Context ctx = new Context();
             ctx.setVariable("username", user.getName());
-            ctx.setVariable("restoreLink", format("%s/restore/%s", hostName, secret));
+            ctx.setVariable("restoreLink", format("%s/passwordrestore?sec=%s", hostName, secret));
             String letter = templateEngine.process("passwordRestore", ctx);
             emailService.sendEmail(user.getEmail(), "Восстановление пароля", letter);
         });

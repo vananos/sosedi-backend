@@ -7,9 +7,8 @@ import java.util.List;
 
 public class RoomTypeListConverter extends BaseJsonConverter<List<RoomType>> {
 
-    @Override
-    protected TypeReference<List<RoomType>> getTypeReference() {
-        return new TypeReference<List<RoomType>>() {
-        };
+    public RoomTypeListConverter() {
+        super(new TypeReference<List<RoomType>>() {
+        });
     }
 }

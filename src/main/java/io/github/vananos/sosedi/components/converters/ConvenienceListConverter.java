@@ -6,9 +6,9 @@ import io.github.vananos.sosedi.models.Convenience;
 import java.util.List;
 
 public class ConvenienceListConverter extends BaseJsonConverter<List<Convenience>> {
-    @Override
-    protected TypeReference<List<Convenience>> getTypeReference() {
-        return new TypeReference<List<Convenience>>() {
-        };
+
+    public ConvenienceListConverter() {
+        super(new TypeReference<List<Convenience>>() {
+        });
     }
 }

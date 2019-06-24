@@ -96,6 +96,11 @@ public class MatchServiceImpl implements MatchService {
         matchRepository.save(match);
     }
 
+    @Override
+    public List<Match> getMutualMatches(Long userId) {
+        return matchRepository.findMutualMatches(userId);
+    }
+
     private void submitTaskToMatchFinder(MatchProcessorTask matchProcessorTask) {
 
         matchingFinderWorkers.submit(() -> {

@@ -6,8 +6,7 @@ import io.github.vananos.sosedi.models.Gender;
 import io.github.vananos.sosedi.models.User;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.Period;
+import static io.github.vananos.sosedi.Utils.calculateAge;
 
 //TODO: improve me
 @Component
@@ -43,9 +42,5 @@ public class SimpleMatchingStrategyImpl implements MatchingStrategy {
 
     private boolean isSuitableAttitude(Attitude first, Attitude second) {
         return !((first == Attitude.GOOD && second == Attitude.BAD) || (first == Attitude.BAD && second == Attitude.GOOD));
-    }
-
-    private int calculateAge(LocalDate birthday) {
-        return Period.between(birthday, LocalDate.now()).getYears();
     }
 }

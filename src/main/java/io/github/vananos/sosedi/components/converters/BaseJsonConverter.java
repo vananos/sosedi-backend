@@ -8,9 +8,11 @@ import javax.persistence.AttributeConverter;
 import java.io.IOException;
 
 public abstract class BaseJsonConverter<T> implements AttributeConverter<T, String> {
-    private TypeReference<T> typeReference = getTypeReference();
+    private final TypeReference<T> typeReference;
 
-    abstract protected TypeReference<T> getTypeReference();
+    protected BaseJsonConverter(TypeReference<T> typeReference) {
+        this.typeReference = typeReference;
+    }
 
     private ObjectMapper objectMapper = new ObjectMapper();
 

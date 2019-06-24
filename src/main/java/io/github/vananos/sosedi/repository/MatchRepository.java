@@ -17,6 +17,10 @@ public interface MatchRepository extends JpaRepository<Match, Long> {
             ":userId) and m.secondUserState = 'NEW'")
     List<Match> findNewMatchesForUser(@Param("userId") Long userId, Pageable pageable);
 
-    @Query("select m from Match m where (m.firstUserState = 'NEW') or (m.secondUserState = 'NEW')")
+    @Query("select m from Match m where m.firstUserState = 'NEW' or m.secondUserState = 'NEW'")
     List<Match> findNewMatches();
+
+    @Query("select m from Match m where m.firstUserState = 'ACCEPTED' and m.secondUserState = 'ACCEPTED' and (m" +
+            ".firstUser.id = :userId or m.secondUser.id = :userId)")
+    List<Match> findMutualMatches(@Param("userId") Long userId);
 }

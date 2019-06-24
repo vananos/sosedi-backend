@@ -16,4 +16,6 @@ public interface MatchService {
     Optional<Match> getMatch(Long matchId);
 
     void updateMatchState(MatchUpdateRequest matchUpdateRequest);
+
+    List<Match> getMutualMatches(Long userId);
 }
