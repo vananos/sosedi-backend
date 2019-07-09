@@ -1,6 +1,6 @@
 package io.github.vananos.sosedi.service.impl;
 
-import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
+import io.github.vananos.sosedi.exceptions.UserAlreadyExistsException;
 import io.github.vananos.sosedi.exceptions.UserNotFoundException;
 import io.github.vananos.sosedi.models.NotificationFrequency;
 import io.github.vananos.sosedi.models.Notifications;
@@ -51,7 +51,7 @@ public class UserServiceImpl implements UserService {
             userRepository.save(user);
             taskExecutor.execute(() -> userConfirmationService.sendConfirmationLetter(user));
         } catch (DataIntegrityViolationException e) {
-            throw new UserAlreadyExists();
+            throw new UserAlreadyExistsException();
         }
     }
 

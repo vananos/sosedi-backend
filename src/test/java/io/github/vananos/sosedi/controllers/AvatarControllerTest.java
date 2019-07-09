@@ -29,8 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
 @AutoConfigureMockMvc
-public class ImageControllerTest {
-    private static final String IMAGE_UPLOAD_ENDPOINT = "/photo";
+public class AvatarControllerTest {
 
     @Autowired
     private MockMvc mvc;
@@ -52,7 +51,7 @@ public class ImageControllerTest {
 
 
         mvc.perform(MockMvcRequestBuilders
-                .fileUpload(IMAGE_UPLOAD_ENDPOINT)
+                .fileUpload("/avatar")
                 .file(new MockMultipartFile("file", image)).param("userId", "1")
                 .with(user(new UserDetailsImpl(getValidUser()))))
                 .andExpect(status().isOk())
@@ -68,7 +67,7 @@ public class ImageControllerTest {
                 Paths.get(
                         getClass().getClassLoader().getResource("imgtest/notimage.txt").getPath()));
         mvc.perform(MockMvcRequestBuilders
-                .fileUpload(IMAGE_UPLOAD_ENDPOINT)
+                .fileUpload("/avatar")
                 .file(new MockMultipartFile("file", notImage)).param("userId", "1")
                 .with(user(new UserDetailsImpl(getValidUser()))))
                 .andExpect(status().isBadRequest());

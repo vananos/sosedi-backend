@@ -29,7 +29,8 @@ public class PasswordResetController {
 
     @PostMapping("/resetpassword")
     public void resetPassword(@Valid @RequestBody PasswordResetRequest passwordResetRequest,
-                              BindingResult bindingResult) {
+                              BindingResult bindingResult)
+    {
         assertHasNoErrors(bindingResult);
 
         passwordResetService.resetPassword(passwordResetRequest.getSecret(), passwordResetRequest.getPassword());

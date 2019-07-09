@@ -22,6 +22,7 @@ import javax.validation.Valid;
 import static io.github.vananos.sosedi.components.validation.ErrorProcessingUtils.assertHasNoErrors;
 
 @RestController
+@RequestMapping("/settings")
 public class SettingsController {
 
     private UserService userService;
@@ -33,7 +34,7 @@ public class SettingsController {
         this.sessionRegistry = sessionRegistry;
     }
 
-    @PostMapping("/changepassword")
+    @RequestMapping(value = "/password", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#changePasswordRequest, 'write')")
     public ResponseEntity changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest,
                                          BindingResult bindingResult)
@@ -45,7 +46,7 @@ public class SettingsController {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/changenotifications")
+    @RequestMapping(value = "/notifications", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#changeNotificationSettingsRequest, 'write')")
     public ResponseEntity changeNotificationSettings(@RequestBody @Valid ChangeNotificationSettingsRequest changeNotificationSettingsRequest, BindingResult bindingResult) {
         assertHasNoErrors(bindingResult);
@@ -58,8 +59,8 @@ public class SettingsController {
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/settings")
-    @PreAuthorize("#userId == authentication.principal.getUser().getId()")
+    @RequestMapping(method = RequestMethod.GET)
+    @PreAuthorize("hasPermission(#userId, 'UserSettings', 'read')")
     public ResponseEntity<BaseResponse<UserSettingsResponse>> getUserSettings(@RequestParam("userid") Long userId) {
         UserSettingsResponse userSettingsResponse = new UserSettingsResponse();
         userSettingsResponse.setNotificationFrequency(userService.findUserById(userId).getNotifications().getNotificationFrequency());
@@ -67,8 +68,8 @@ public class SettingsController {
         return ResponseEntity.ok(new BaseResponse<UserSettingsResponse>().data(userSettingsResponse));
     }
 
-    @PostMapping("deleteaccount")
-    @PreAuthorize("#userId == authentication.principal.getUser().getId()")
+    @RequestMapping(value = "/deleteaccount", method = RequestMethod.POST)
+    @PreAuthorize("hasPermission(#userId, 'User', 'delete')")
     public ResponseEntity deleteAccount(@RequestParam("userid") Long userId, HttpServletRequest request,
                                         Authentication authentication)
     {

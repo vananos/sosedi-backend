@@ -56,8 +56,9 @@ public class SettingsControllerTest {
 
         when(userRepository.findById(eq(user.getId()))).thenReturn(Optional.of(getValidUser()));
         when(passwordEncoder.encode(any())).thenReturn("encoded_pass");
+        when(userRepository.save(any())).thenReturn(user);
 
-        mvc.perform(post("/changepassword")
+        mvc.perform(post("/settings/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .with(user(new UserDetailsImpl(user)))
@@ -80,7 +81,7 @@ public class SettingsControllerTest {
         changePasswordRequest.setUserId(user.getId() + 1);
         changePasswordRequest.setPassword("New_Password_1");
 
-        mvc.perform(post("/changepassword")
+        mvc.perform(post("/settings/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .with(user(new UserDetailsImpl(user)))
@@ -97,8 +98,9 @@ public class SettingsControllerTest {
         req.setNotificationFrequency(NotificationFrequency.NEVER);
 
         when(userRepository.findById(eq(user.getId()))).thenReturn(Optional.of(getValidUser()));
+        when(userRepository.save(any())).thenReturn(user);
 
-        mvc.perform(post("/changenotifications")
+        mvc.perform(post("/settings/notifications")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .with(user(new UserDetailsImpl(user)))
@@ -114,7 +116,7 @@ public class SettingsControllerTest {
         req.setUserId(user.getId() + 1);
         req.setNotificationFrequency(NotificationFrequency.NEVER);
 
-        mvc.perform(post("/changenotifications")
+        mvc.perform(post("/settings/notifications")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .with(user(new UserDetailsImpl(user)))

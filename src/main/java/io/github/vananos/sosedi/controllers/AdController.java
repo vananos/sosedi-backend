@@ -37,7 +37,9 @@ public class AdController {
 
     @PostMapping("ad")
     @PreAuthorize("hasPermission(#adRequest, 'write')")
-    public ResponseEntity<BaseResponse<AdResponse>> postAd(@Valid @RequestBody AdRequest adRequest, BindingResult bindingResult) {
+    public ResponseEntity<BaseResponse<AdResponse>> postAd(@Valid @RequestBody AdRequest adRequest,
+                                                           BindingResult bindingResult)
+    {
         assertHasNoErrors(bindingResult);
         ModelMapper modelMapper = new ModelMapper();
         Advertisement advertisement = modelMapper.map(adRequest, Advertisement.class);

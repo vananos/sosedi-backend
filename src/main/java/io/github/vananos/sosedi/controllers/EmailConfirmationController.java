@@ -28,7 +28,8 @@ public class EmailConfirmationController {
         Optional<User> user = userConfirmationService.confirmEmail(confirmationId);
         String redirectPath = "/confirmhandler" + (user.isPresent() ?
                 "?status=confirmed&username=" + URLEncoder.encode(user.get().getName(),
-                        StandardCharsets.UTF_8.toString())
+                        StandardCharsets.UTF_8.toString()
+                )
                 : "?status=error");
 
         response.sendRedirect(redirectPath);

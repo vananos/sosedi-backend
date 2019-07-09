@@ -1,6 +1,6 @@
 package io.github.vananos.sosedi.controllers;
 
-import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
+import io.github.vananos.sosedi.exceptions.UserAlreadyExistsException;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.registration.RegistrationRequest;
 import io.github.vananos.sosedi.service.UserService;
@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import java.util.stream.Stream;
 
 import static io.github.vananos.Utils.toJson;
-import static io.github.vananos.sosedi.controllers.RegistrationController.PASSWORD_CONFIRMATION_MUST_MATCH;
 import static io.github.vananos.sosedi.controllers.RegistrationController.USER_ALREADY_EXISTS;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
@@ -68,7 +67,7 @@ public class RegistrationControllerTest {
 
     @Test
     public void register_userAlreadyExists() throws Exception {
-        doThrow(new UserAlreadyExists()).when(userService).registerUser(any(User.class));
+        doThrow(new UserAlreadyExistsException()).when(userService).registerUser(any(User.class));
 
         mvc.perform(
                 registrationPost()
@@ -109,19 +108,7 @@ public class RegistrationControllerTest {
                 Arguments.of(withInvalidSurname, "surname"),
                 Arguments.of(withInvalidEmail, "email"),
                 Arguments.of(withWeakPassword, "password")
-                        );
-    }
-
-    @Test
-    public void register_passwordConfirmationDoNotMatch() throws Exception {
-        RegistrationRequest registrationRequest = validUserRegistrationRequest();
-
-        mvc.perform(
-                registrationPost()
-                        .content(toJson(registrationRequest)))
-
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0].description", is(PASSWORD_CONFIRMATION_MUST_MATCH)));
+        );
     }
 
     private MockHttpServletRequestBuilder registrationPost() {

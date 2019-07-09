@@ -1,8 +1,5 @@
 package io.github.vananos.sosedi.config.security;
 
-import io.github.vananos.sosedi.security.CustomPermissionEvaluator;
-import io.github.vananos.sosedi.service.MatchService;
-import io.github.vananos.sosedi.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -35,8 +32,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
     private AuthenticationSuccessHandler authenticationSuccessHandler;
     private SimpleUrlAuthenticationFailureHandler failureHandler = new SimpleUrlAuthenticationFailureHandler();
-    private UserService userService;
-    private MatchService matchService;
+    private PermissionEvaluator permissionEvaluator;
 
     @Value("${sosedi.cors.dev}")
     private Boolean isCorsDev;
@@ -46,15 +42,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
             AuthenticationEntryPoint authenticationEntryPoint,
             UserDetailsService userDetailsService,
             AuthenticationSuccessHandler authenticationSuccessHandler,
-            UserService userService,
-            MatchService matchService,
-            PasswordEncoder passwordEncoder)
+            PasswordEncoder passwordEncoder,
+            PermissionEvaluator permissionEvaluator)
     {
         this.userDetailsService = userDetailsService;
         this.authenticationEntryPoint = authenticationEntryPoint;
         this.authenticationSuccessHandler = authenticationSuccessHandler;
-        this.userService = userService;
-        this.matchService = matchService;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -106,13 +99,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         DefaultWebSecurityExpressionHandler expressionHandler = new DefaultWebSecurityExpressionHandler();
-        expressionHandler.setPermissionEvaluator(customPermissionEvaluator());
+        expressionHandler.setPermissionEvaluator(permissionEvaluator);
         web.expressionHandler(expressionHandler);
-    }
-
-    @Bean
-    public PermissionEvaluator customPermissionEvaluator() {
-        return new CustomPermissionEvaluator(userService, matchService);
     }
 
     @Bean

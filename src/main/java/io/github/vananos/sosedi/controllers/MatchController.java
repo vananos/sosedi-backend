@@ -1,7 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
-import io.github.vananos.sosedi.models.*;
-import io.github.vananos.sosedi.models.Match.MatchState;
+import io.github.vananos.sosedi.models.Match;
+import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.ad.AdResponse;
 import io.github.vananos.sosedi.models.dto.matching.MatchResponseEntity;
 import io.github.vananos.sosedi.models.dto.matching.MatchUpdateRequest;
@@ -14,17 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import static io.github.vananos.sosedi.Utils.calculateAge;
-import static java.util.Arrays.asList;
 
 @RestController
 public class MatchController {
     private MatchService matchService;
-    private int callCounter = 0;
 
     @Autowired
     public MatchController(MatchService matchService) {
@@ -34,8 +31,7 @@ public class MatchController {
     @GetMapping("/matches")
     @PreAuthorize("hasPermission(#userId, 'matches', 'read')")
     public ResponseEntity<BaseResponse<List<MatchResponseEntity>>> getMatchesForUser(@RequestParam("userid") Long userId) {
-        List<Match> matches = matchStub();//callCounter++ < 1 ? matchStub() : Collections.emptyList();//matchService
-        // .getMatchesForUser(userId);
+        List<Match> matches = matchService.getMatchesForUser(userId);
         ModelMapper modelMapper = new ModelMapper();
 
         List<MatchResponseEntity> responseEntities = matches.stream()
@@ -50,9 +46,9 @@ public class MatchController {
     }
 
     @PostMapping("/match")
-//    @PreAuthorize("hasPermission(#matchUpdateRequest, 'write')")
+    @PreAuthorize("hasPermission(#matchUpdateRequest, 'write')")
     public ResponseEntity<BaseResponse> match(@RequestBody MatchUpdateRequest matchUpdateRequest) {
-//        matchService.updateMatchState(matchUpdateRequest);
+        matchService.updateMatchState(matchUpdateRequest);
         return ResponseEntity.ok(new BaseResponse());
     }
 
@@ -80,42 +76,42 @@ public class MatchController {
         matchResponseEntity.setUserProfileInfo(userProfileInfo);
         return matchResponseEntity;
     }
-
-    private List<Match> matchStub() {
-        User user = new User();
-        user.setId(2L);
-        user.setName("Ваня " + callCounter++);
-        user.setSurname("Заяц");
-        user.setBirthday(LocalDate.of(1998, 11, 1));
-        user.setGender(Gender.MALE);
-        user.setPhone("+7921 928 35 46");
-        user.setDescription("Норм парень");
-        user.setInterests(asList(Interests.SPORT, Interests.BOOKS));
-        user.setAvatar("0db964bb-ea9b-4e8a-aec2-0afdc3974573.png");
-
-        Advertisement advertisement = new Advertisement();
-        advertisement.setRentPay(25);
-        advertisement.setRoomType(asList(RoomType.SINGLE, RoomType.DOUBLE));
-        advertisement.setLandlord(true);
-        advertisement.setMinAge(12);
-        advertisement.setMaxAge(45);
-        advertisement.setSmoking(Attitude.NEUTRAL);
-        advertisement.setAnimals(Attitude.NEUTRAL);
-        advertisement.setDescription("Ищю чистюлю");
-        advertisement.setConveniences(asList(Convenience.TV, Convenience.FRIDGE));
-        advertisement.setPlaceId(new GeoInfo());
-        advertisement.getPlaceId().setAddress("Санкт-Петербург");
-        user.setAdvertisement(advertisement);
-
-        User user1 = new User();
-        user1.setId(1L);
-
-
-        Match match = new Match();
-        match.setFirstUser(user);
-        match.setFirstUserState(MatchState.ACCEPTED);
-        match.setSecondUser(user1);
-        match.setSecondUserState(MatchState.ACCEPTED);
-        return asList(match, match, match, match, match, match, match);
-    }
+//
+//    private List<Match> matchStub() {
+//        User user = new User();
+//        user.setId(2L);
+//        user.setName("Ваня " + callCounter++);
+//        user.setSurname("Заяц");
+//        user.setBirthday(LocalDate.of(1998, 11, 1));
+//        user.setGender(Gender.MALE);
+//        user.setPhone("+7921 928 35 46");
+//        user.setDescription("Норм парень");
+//        user.setInterests(asList(Interests.SPORT, Interests.BOOKS));
+//        user.setAvatar("0db964bb-ea9b-4e8a-aec2-0afdc3974573.png");
+//
+//        Advertisement advertisement = new Advertisement();
+//        advertisement.setRentPay(25);
+//        advertisement.setRoomType(asList(RoomType.SINGLE, RoomType.DOUBLE));
+//        advertisement.setLandlord(true);
+//        advertisement.setMinAge(12);
+//        advertisement.setMaxAge(45);
+//        advertisement.setSmoking(Attitude.NEUTRAL);
+//        advertisement.setAnimals(Attitude.NEUTRAL);
+//        advertisement.setDescription("Ищю чистюлю");
+//        advertisement.setConveniences(asList(Convenience.TV, Convenience.FRIDGE));
+//        advertisement.setPlaceId(new GeoInfo());
+//        advertisement.getPlaceId().setAddress("Санкт-Петербург");
+//        user.setAdvertisement(advertisement);
+//
+//        User user1 = new User();
+//        user1.setId(1L);
+//
+//
+//        Match match = new Match();
+//        match.setFirstUser(user);
+//        match.setFirstUserState(MatchState.ACCEPTED);
+//        match.setSecondUser(user1);
+//        match.setSecondUserState(MatchState.ACCEPTED);
+//        return asList(match, match, match, match, match, match, match);
+//    }
 }

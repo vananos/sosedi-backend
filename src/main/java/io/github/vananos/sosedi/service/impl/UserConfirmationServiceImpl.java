@@ -38,10 +38,12 @@ public class UserConfirmationServiceImpl implements UserConfirmationService {
     public void sendConfirmationLetter(User user) {
         Context ctx = new Context();
         ctx.setVariable("confirmationLink", String.format("%s/confirmation/%s", hostName,
-                user.getEmailConfirmationId()));
+                user.getEmailConfirmationId()
+        ));
 
         ctx.setVariable("cancelConfirmationLink", String.format("%s/confirmationcancel/%s", hostName,
-                user.getEmailConfirmationId()));
+                user.getEmailConfirmationId()
+        ));
         ctx.setVariable("username", user.getName());
         String htmlLetter = templateEngine.process("confirmationEmail", ctx);
         emailService.sendEmail(user.getEmail(), "Подтверждение учетной записи", htmlLetter);

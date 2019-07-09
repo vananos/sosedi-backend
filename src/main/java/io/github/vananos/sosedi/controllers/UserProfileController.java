@@ -7,6 +7,7 @@ import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
 import io.github.vananos.sosedi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.PropertyMap;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -46,7 +47,11 @@ public class UserProfileController {
 
         assertHasNoErrors(bindingResult);
         User user = userService.findUserById(userProfileInfo.getId());
-        new ModelMapper().map(userProfileInfo, user);
+        new ModelMapper().addMappings(new PropertyMap<UserProfileInfo, User>() {
+            protected void configure() {
+                skip().setAvatar(null);
+            }
+        }).map(userProfileInfo, user);
         if (user.getUserStatus() == UserStatus.EMAIL_CONFIRMED) {
             user.setUserStatus(User.UserStatus.PROFILE_FILLED);
         }

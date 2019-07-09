@@ -2,8 +2,8 @@ package io.github.vananos.sosedi.components;
 
 
 import io.github.vananos.sosedi.models.User;
-import io.github.vananos.sosedi.security.CustomPermissionEvaluator;
 import io.github.vananos.sosedi.security.UserDetailsImpl;
+import io.github.vananos.sosedi.security.permission.PermissionEvaluatorImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +18,10 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
-public class CustomPermissionEvaluatorTest {
+public class PermissionEvaluatorImplTest {
 
     @Autowired
-    private CustomPermissionEvaluator customPermissionEvaluator;
+    private PermissionEvaluatorImpl permissionEvaluatorImpl;
 
     @Test
     public void shouldThrowExceptionForEmailUnconfirmedUsers() {
@@ -32,7 +32,7 @@ public class CustomPermissionEvaluatorTest {
         when(authentication.getPrincipal()).thenReturn(new UserDetailsImpl(expectedUser));
 
         assertThrows(AccessDeniedException.class, () -> {
-            customPermissionEvaluator.hasPermission(authentication, null, "any");
+            permissionEvaluatorImpl.hasPermission(authentication, null, "any");
         });
 
     }

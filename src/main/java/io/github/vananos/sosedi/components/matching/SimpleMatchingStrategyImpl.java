@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 import static io.github.vananos.sosedi.Utils.calculateAge;
 
-//TODO: improve me
 @Component
 public class SimpleMatchingStrategyImpl implements MatchingStrategy {
 
@@ -20,7 +19,7 @@ public class SimpleMatchingStrategyImpl implements MatchingStrategy {
         Advertisement userAd = secondUser.getAdvertisement();
         Advertisement targetUserAd = targetUser.getAdvertisement();
 
-        return !secondUser.getId().equals(targetUser.getId()) &&
+        return !secondUser.equals(targetUser) &&
                 isSuitableGender(userAd.getGender(), targetUser.getGender()) &&
                 isSuitableGender(targetUserAd.getGender(), secondUser.getGender()) &&
 

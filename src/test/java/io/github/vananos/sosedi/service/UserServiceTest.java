@@ -1,7 +1,9 @@
 package io.github.vananos.sosedi.service;
 
-import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
+import io.github.vananos.sosedi.exceptions.UserAlreadyExistsException;
 import io.github.vananos.sosedi.exceptions.UserNotFoundException;
+import io.github.vananos.sosedi.models.NotificationFrequency;
+import io.github.vananos.sosedi.models.Notifications;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -48,6 +50,8 @@ public class UserServiceTest {
         User expectedUserProfile = getValidUser();
         expectedUserProfile.setPassword(passwordEncoder.encode(validUser.getPassword()));
         expectedUserProfile.setEmailConfirmationId(CONFIRMATION_LINK);
+        expectedUserProfile.setNotifications(new Notifications());
+        expectedUserProfile.getNotifications().setNotificationFrequency(NotificationFrequency.ONE_DAY);
 
         verify(userConfirmationService, timeout(1000).times(1)).sendConfirmationLetter(expectedUserProfile);
         verify(userRepository, times(1)).save(eq(expectedUserProfile));
@@ -56,7 +60,7 @@ public class UserServiceTest {
     @Test
     public void registerUserWithExistingEmail_userAlreadyExistsError() {
         when(userRepository.save(any())).thenThrow(DataIntegrityViolationException.class);
-        assertThrows(UserAlreadyExists.class, () -> {
+        assertThrows(UserAlreadyExistsException.class, () -> {
             userService.registerUser(getValidUser());
         });
     }

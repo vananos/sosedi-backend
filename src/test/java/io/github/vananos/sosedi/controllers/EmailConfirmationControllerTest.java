@@ -45,7 +45,8 @@ public class EmailConfirmationControllerTest {
         mvc.perform(MockMvcRequestBuilders.get(EMAIL_CONFIRMATION_URL))
                 .andExpect(status().isFound())
                 .andExpect(redirectedUrl("/confirmhandler?status=confirmed&username=" + URLEncoder.encode(expectedUser.getName(),
-                        StandardCharsets.UTF_8.toString())));
+                        StandardCharsets.UTF_8.toString()
+                )));
     }
 
 

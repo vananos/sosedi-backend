@@ -84,7 +84,7 @@ public class PasswordResetControllerIntegrationTest {
         when(passwordEncoder.encode(any())).thenReturn("NEWPASSWORD_ENCODED");
 
         PasswordResetRequest passwordResetRequest = new PasswordResetRequest();
-        passwordResetRequest.setPassword("NEWPASSWORD");
+        passwordResetRequest.setPassword("NEWPASSWORD1");
         passwordResetRequest.setSecret(capturedValue.getSecret());
 
         mvc.perform(post("/resetpassword").contentType(MediaType.APPLICATION_JSON)

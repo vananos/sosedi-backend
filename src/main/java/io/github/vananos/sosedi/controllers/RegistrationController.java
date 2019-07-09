@@ -1,9 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
-import io.github.vananos.sosedi.exceptions.UserAlreadyExists;
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
-import io.github.vananos.sosedi.models.dto.registration.Error;
 import io.github.vananos.sosedi.models.dto.registration.RegistrationRequest;
 import io.github.vananos.sosedi.service.UserService;
 import org.modelmapper.ModelMapper;
@@ -15,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.Collections;
 
 import static io.github.vananos.sosedi.components.validation.ErrorProcessingUtils.assertHasNoErrors;
 
@@ -34,20 +31,13 @@ public class RegistrationController {
     @PostMapping("/register")
     public ResponseEntity<BaseResponse> register(
             @RequestBody @Valid RegistrationRequest registrationRequest,
-            BindingResult bindingResult) {
+            BindingResult bindingResult)
+    {
 
         assertHasNoErrors(bindingResult);
 
         User user = new ModelMapper().map(registrationRequest, User.class);
-        try {
-            userService.registerUser(user);
-            // TODO глобальный контроль исключений!
-        } catch (UserAlreadyExists e) {
-            return ResponseEntity.badRequest()
-                    .body(new BaseResponse()
-                            .errors(Collections.singletonList(
-                                    new Error().description(USER_ALREADY_EXISTS))));
-        }
+        userService.registerUser(user);
 
         return ResponseEntity.ok(new BaseResponse());
     }
