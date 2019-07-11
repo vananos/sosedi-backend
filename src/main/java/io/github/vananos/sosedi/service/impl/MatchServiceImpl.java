@@ -29,6 +29,7 @@ import static io.github.vananos.sosedi.models.Match.MatchState.DECLINED;
 import static java.lang.String.format;
 
 @Service
+//TODO: improve this part, it slow now
 public class MatchServiceImpl implements MatchService {
 
     @Value("${matching.workers}")

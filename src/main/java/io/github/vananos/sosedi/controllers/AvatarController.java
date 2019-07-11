@@ -41,9 +41,6 @@ public class AvatarController {
     public ResponseEntity<BaseResponse> saveAvatar(@RequestParam("file") MultipartFile file,
                                                    @RequestParam("userId") Long userId)
     {
-//        MultipartFile file = request.getFile("file");
-//        Long userId = Long.parseLong(request.getParameter("userId"));
-
         BufferedImage image = tryDeserializeImage(file)
                 .orElseThrow(
                         () -> new ResponseStatusException(HttpStatus.BAD_REQUEST));
@@ -57,8 +54,8 @@ public class AvatarController {
 
     private Optional<BufferedImage> tryDeserializeImage(MultipartFile file) {
         BufferedImage image;
-        try {
-            image = ImageIO.read(new ByteArrayInputStream(file.getBytes()));
+        try (ByteArrayInputStream bs = new ByteArrayInputStream(file.getBytes())) {
+            image = ImageIO.read(bs);
             if (image == null) {
                 return Optional.empty();
             }
