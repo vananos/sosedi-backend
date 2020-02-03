@@ -31,12 +31,10 @@
         <td>
             <p class="main-msg">
                 Здравствуйте, <span th:text="${username}">Лиза!</span><br><br>
-                Недавно вы прислали запрос на изменение пароля, для завершения процедуры перейдите по ссылке.
             </p>
-            <a th:href="${restoreLink}" href="#"
-               style="display: block;background-color: #43A4AE; margin: 0 auto;width: 280px;height: 48px;text-align: center;color: white !important;text-decoration: none !important;line-height: 48px;">Изменить
-                пароль</a>
-
+            <p>
+                Ваш новый код для входа: <span style="font-weight: bold;" th:text="${pincode}"></span>
+            </p>
             <footer>
                 С уважением, <br> Служба технической поддержки SOSEDI
             </footer>

@@ -1,7 +1,6 @@
 package io.github.vananos.sosedi.models.dto.registration;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.github.vananos.sosedi.components.validation.ValidPassword;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
@@ -12,7 +11,6 @@ import javax.validation.constraints.Size;
 public class RegistrationRequest {
     public static final int NAME_MIN_LENGTH = 2;
     public static final int NAME_MAX_LENGTH = 15;
-    public static final int PASSWORD_MIN_LENGTH = 6;
 
     @JsonProperty("name")
     @NotNull
@@ -28,8 +26,4 @@ public class RegistrationRequest {
     @NotNull
     @Email
     private String email;
-
-    @JsonProperty("password")
-    @ValidPassword
-    private String password;
 }

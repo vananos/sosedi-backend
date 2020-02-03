@@ -34,7 +34,7 @@ public class SettingsController {
         this.sessionRegistry = sessionRegistry;
     }
 
-    @RequestMapping(value = "/password", method = RequestMethod.POST)
+    @RequestMapping(value = "/pincode", method = RequestMethod.POST)
     @PreAuthorize("hasPermission(#changePasswordRequest, 'write')")
     public ResponseEntity changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest,
                                          BindingResult bindingResult)

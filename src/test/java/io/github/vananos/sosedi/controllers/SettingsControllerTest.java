@@ -58,7 +58,7 @@ public class SettingsControllerTest {
         when(passwordEncoder.encode(any())).thenReturn("encoded_pass");
         when(userRepository.save(any())).thenReturn(user);
 
-        mvc.perform(post("/settings/password")
+        mvc.perform(post("/settings/pincode")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .with(user(new UserDetailsImpl(user)))
@@ -69,7 +69,7 @@ public class SettingsControllerTest {
 
         verify(userRepository, times(1)).save(argumentCaptor.capture());
 
-        assertThat(argumentCaptor.getValue().getPassword()).isEqualTo("encoded_pass");
+        assertThat(argumentCaptor.getValue().getPincode()).isEqualTo("encoded_pass");
     }
 
 
@@ -81,7 +81,7 @@ public class SettingsControllerTest {
         changePasswordRequest.setUserId(user.getId() + 1);
         changePasswordRequest.setPassword("New_Password_1");
 
-        mvc.perform(post("/settings/password")
+        mvc.perform(post("/settings/pincode")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .with(user(new UserDetailsImpl(user)))

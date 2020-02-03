@@ -59,7 +59,7 @@ public class RegistrationControllerTest {
         User userRegistrationInfo = new User();
         userRegistrationInfo.setName(validUserRegistrationRequest.getName());
         userRegistrationInfo.setSurname(validUserRegistrationRequest.getSurname());
-        userRegistrationInfo.setPassword(validUserRegistrationRequest.getPassword());
+        userRegistrationInfo.setPincode(validUserRegistrationRequest.getPassword());
         userRegistrationInfo.setEmail(validUserRegistrationRequest.getEmail());
 
         verify(userService, times(1)).registerUser(Matchers.eq(userRegistrationInfo));
@@ -107,7 +107,7 @@ public class RegistrationControllerTest {
                 Arguments.of(withInvalidName, "name"),
                 Arguments.of(withInvalidSurname, "surname"),
                 Arguments.of(withInvalidEmail, "email"),
-                Arguments.of(withWeakPassword, "password")
+                Arguments.of(withWeakPassword, "pincode")
         );
     }
 

@@ -48,7 +48,7 @@ public class UserServiceTest {
         userService.registerUser(validUser);
 
         User expectedUserProfile = getValidUser();
-        expectedUserProfile.setPassword(passwordEncoder.encode(validUser.getPassword()));
+        expectedUserProfile.setPincode(passwordEncoder.encode(validUser.getPincode()));
         expectedUserProfile.setEmailConfirmationId(CONFIRMATION_LINK);
         expectedUserProfile.setNotifications(new Notifications());
         expectedUserProfile.getNotifications().setNotificationFrequency(NotificationFrequency.ONE_DAY);
@@ -79,7 +79,7 @@ public class UserServiceTest {
         expectedUser.setId(1L);
         expectedUser.setName("testUser");
         expectedUser.setSurname("testSurName");
-        expectedUser.setPassword("somePassword");
+        expectedUser.setPincode("somePassword");
         expectedUser.setUserStatus(User.UserStatus.EMAIL_UNCONFIRMED);
         expectedUser.setBirthday(LocalDate.of(2000, 11, 21));
         expectedUser.setDescription("About myself");

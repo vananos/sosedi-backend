@@ -1,7 +1,6 @@
 package io.github.vananos.sosedi.models.dto.passwordreset;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.github.vananos.sosedi.components.validation.ValidPassword;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -13,7 +12,6 @@ public class PasswordResetRequest {
     @NotNull
     private String secret;
 
-    @JsonProperty("password")
-    @ValidPassword
+    @JsonProperty("pincode")
     private String password;
 }

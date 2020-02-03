@@ -29,8 +29,8 @@ public class User {
     @Column(name = "SURNAME", nullable = false)
     private String surname;
 
-    @Column(name = "PASSWORD", nullable = false)
-    private String password;
+    @Column(name = "PINCODE", nullable = false)
+    private String pincode;
 
     @Column(name = "BIRTHDAY")
     private LocalDate birthday;

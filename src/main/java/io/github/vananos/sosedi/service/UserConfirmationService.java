@@ -5,7 +5,7 @@ import io.github.vananos.sosedi.models.User;
 import java.util.Optional;
 
 public interface UserConfirmationService {
-    void sendConfirmationLetter(User user);
+    void sendConfirmationLetter(User user, String pincode);
 
     Optional<User> confirmEmail(String confirmationId);
 

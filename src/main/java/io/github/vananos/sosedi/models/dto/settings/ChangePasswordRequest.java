@@ -1,7 +1,6 @@
 package io.github.vananos.sosedi.models.dto.settings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import io.github.vananos.sosedi.components.validation.ValidPassword;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
@@ -13,8 +12,7 @@ public class ChangePasswordRequest {
     @NotNull
     private Long userId;
 
-    @JsonProperty("password")
+    @JsonProperty("pincode")
     @NotNull
-    @ValidPassword
     private String password;
 }

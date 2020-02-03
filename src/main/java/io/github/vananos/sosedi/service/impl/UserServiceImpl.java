@@ -17,6 +17,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import static io.github.vananos.sosedi.Utils.getRandomPincode;
+
 @Service
 @Slf4j
 public class UserServiceImpl implements UserService {
@@ -42,19 +44,20 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void registerUser(User user) {
+        String password = getRandomPincode();
+        user.setPincode(passwordEncoder.encode(password));
+        user.setEmailConfirmationId(userConfirmationService.generateLink());
+        Notifications notifications = new Notifications();
+        notifications.setNotificationFrequency(NotificationFrequency.ONE_DAY);
+        user.setNotifications(notifications);
         try {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setEmailConfirmationId(userConfirmationService.generateLink());
-            Notifications notifications = new Notifications();
-            notifications.setNotificationFrequency(NotificationFrequency.ONE_DAY);
-            user.setNotifications(notifications);
             userRepository.save(user);
-            taskExecutor.execute(() -> userConfirmationService.sendConfirmationLetter(user));
         } catch (DataIntegrityViolationException e) {
             throw new UserAlreadyExistsException();
         }
-    }
+        taskExecutor.execute(() -> userConfirmationService.sendConfirmationLetter(user, password));
 
+    }
 
     @Override
     public User updateUserInfo(User user) {
@@ -78,7 +81,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateUserPassword(Long userId, String password) {
         User user = findUserById(userId);
-        user.setPassword(passwordEncoder.encode(password));
+        user.setPincode(passwordEncoder.encode(password));
         updateUserInfo(user);
     }
 

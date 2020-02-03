@@ -19,7 +19,6 @@ import static io.github.vananos.sosedi.components.validation.ErrorProcessingUtil
 @RestController
 public class RegistrationController {
     public static final String USER_ALREADY_EXISTS = "user already exists";
-    public static final String PASSWORD_CONFIRMATION_MUST_MATCH = "password confirmation must match";
 
     private UserService userService;
 

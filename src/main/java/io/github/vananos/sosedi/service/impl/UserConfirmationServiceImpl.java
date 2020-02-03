@@ -35,7 +35,7 @@ public class UserConfirmationServiceImpl implements UserConfirmationService {
     }
 
     @Override
-    public void sendConfirmationLetter(User user) {
+    public void sendConfirmationLetter(User user, String pincode) {
         Context ctx = new Context();
         ctx.setVariable("confirmationLink", String.format("%s/confirmation/%s", hostName,
                 user.getEmailConfirmationId()
@@ -45,6 +45,7 @@ public class UserConfirmationServiceImpl implements UserConfirmationService {
                 user.getEmailConfirmationId()
         ));
         ctx.setVariable("username", user.getName());
+        ctx.setVariable("pincode", pincode);
         String htmlLetter = templateEngine.process("confirmationEmail", ctx);
         emailService.sendEmail(user.getEmail(), "Подтверждение учетной записи", htmlLetter);
     }
