@@ -1,0 +1,235 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: vananos
+      changes:
+        - createTable:
+            tableName: advertisements
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: yes
+                  constraints:
+                    primaryKey: yes
+                    nullable: no
+              - column:
+                  name: gender
+                  type: varchar(10)
+                  constraints:
+                    nullable: no
+              - column:
+                  name: landlord
+                  type: boolean
+                  constraints:
+                    nullable: no
+              - column:
+                  name: place_id
+                  type: jsonb
+                  constraints:
+                    nullable: no
+              - column:
+                  name: smoking
+                  type: varchar(10)
+                  constraints:
+                    nullable: no
+              - column:
+                  name: min_age
+                  type: int
+                  constraints:
+                    nullable: no
+              - column:
+                  name: max_age
+                  type: int
+                  constraints:
+                    nullable: no
+              - column:
+                  name: room_type
+                  type: jsonb
+                  constraints:
+                    nullable: no
+              - column:
+                  name: conveniences
+                  type: jsonb
+                  constraints:
+                    nullable: no
+              - column:
+                  name: rent_pay
+                  type: int
+                  constraints:
+                    nullable: no
+              - column:
+                  name: description
+                  type: varchar(255)
+                  constraints:
+                    nullable: no
+
+        - createTable:
+            tableName: notifications
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: yes
+                  constraints:
+                    primaryKey: yes
+                    nullable: yes
+              - column:
+                  name: notification_frequency
+                  type: varchar(10)
+              - column:
+                  name: last_sent
+                  type: timestamp
+
+
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: yes
+                  constraints:
+                    primaryKey: yes
+                    nullable: yes
+              - column:
+                  name: avatar
+                  type: varchar(512)
+              - column:
+                  name: email
+                  type: varchar(256)
+                  constraints:
+                    nullable: no
+                    unique: yes
+              - column:
+                  name: name
+                  type: varchar(50)
+                  constraints:
+                    nullable: no
+              - column:
+                  name: surname
+                  type: varchar(50)
+                  constraints:
+                    nullable: no
+              - column:
+                  name: pincode
+                  type: varchar(256)
+                  constraints:
+                    nullable: no
+              - column:
+                  name: birthdate
+                  type: date
+                  constraints:
+                    nullable: no
+              - column:
+                  name: phone
+                  type: varchar(20)
+              - column:
+                  name: interests
+                  type: jsonb
+              - column:
+                  name: description
+                  type: varchar(512)
+              - column:
+                  name: email_confirmation_id
+                  type: varchar(256)
+                  constraints:
+                    nullable: no
+                    unique: yes
+              - column:
+                  name: user_status
+                  type: varchar(15)
+                  constraints:
+                    nullable: no
+              - column:
+                  name: gender
+                  type: varchar(10)
+                  constraints:
+                    nullable: no
+              - column:
+                  name: advertisement_id
+                  type: int
+                  constraints:
+                    foreignKeyName: fk_advertiement_id
+                    references: advertisements(id)
+              - column:
+                  name: notification_id
+                  type: int
+                  constraints:
+                    nullable: no
+                    foreignKeyName: fk_notification_id
+                    references: notifications(id)
+
+
+        - createTable:
+            tableName: matches
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: yes
+                  constraints:
+                    primaryKey: yes
+                    nullable: no
+              - column:
+                  name: first_user_id
+                  type: int
+                  constraints:
+                    nullable: no
+                    foreignKeyName: fk_first_user_id
+                    references: users(id)
+              - column:
+                  name: first_user_state
+                  type: varchar(10)
+                  constraints:
+                    nullable: no
+              - column:
+                  name: second_user_id
+                  type: int
+                  constraints:
+                    nullable: no
+                    foreignKeyName: fk_second_user_id
+                    references: users(id)
+              - column:
+                  name: second_user_state
+                  type: varchar(10)
+                  constraints:
+                    nullable: no
+
+        - createTable:
+            tableName: match_processor_queue
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  autoIncrement: yes
+                  constraints:
+                    primaryKey: yes
+                    nullable: no
+              - column:
+                  name: user_id
+                  type: int
+                  constraints:
+                    nullable: no
+                    foreignKeyName: fk_user_id
+                    references: users(id)
+              - column:
+                  name: status
+                  type: varchar(10)
+                  constraints:
+                    nullable: no
+              - column:
+                  name: creation_time
+                  type: timestamp
+                  constraints:
+                    nullable: no
+              - column:
+                  name: start_processing_time
+                  type: timestamp
+                  constraints:
+                    nullable: no
+              - column:
+                  name: end_processing_time
+                  type: timestamp
+                  constraints:
+                    nullable: no
