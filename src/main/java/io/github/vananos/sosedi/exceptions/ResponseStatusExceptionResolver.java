@@ -2,8 +2,8 @@ package io.github.vananos.sosedi.exceptions;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
-import io.github.vananos.sosedi.models.dto.registration.Error;
+import io.github.vananos.sosedi.models.dto.BaseResponse;
+import io.github.vananos.sosedi.models.dto.Error;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

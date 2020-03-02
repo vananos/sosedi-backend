@@ -77,7 +77,7 @@ public class Utils {
         expectedUser.setId(1L);
         expectedUser.setName("testUser");
         expectedUser.setSurname("testSurName");
-        expectedUser.setPincode("somePassword");
+        expectedUser.setPinCode("somePassword");
         expectedUser.setUserStatus(User.UserStatus.EMAIL_CONFIRMED);
         expectedUser.setBirthday(LocalDate.of(2000, 11, 21));
         expectedUser.setDescription("About myself");

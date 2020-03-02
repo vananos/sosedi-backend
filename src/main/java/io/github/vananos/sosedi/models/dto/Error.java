@@ -1,4 +1,4 @@
-package io.github.vananos.sosedi.models.dto.registration;
+package io.github.vananos.sosedi.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;

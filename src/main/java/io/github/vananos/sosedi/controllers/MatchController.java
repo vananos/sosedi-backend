@@ -5,7 +5,7 @@ import io.github.vananos.sosedi.models.Match.MatchState;
 import io.github.vananos.sosedi.models.dto.ad.AdResponse;
 import io.github.vananos.sosedi.models.dto.matching.MatchResponseEntity;
 import io.github.vananos.sosedi.models.dto.matching.MatchUpdateRequest;
-import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
+import io.github.vananos.sosedi.models.dto.BaseResponse;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
 import io.github.vananos.sosedi.service.MatchService;
 import org.modelmapper.ModelMapper;

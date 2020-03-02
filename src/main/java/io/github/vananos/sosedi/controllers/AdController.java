@@ -3,7 +3,7 @@ package io.github.vananos.sosedi.controllers;
 import io.github.vananos.sosedi.models.Advertisement;
 import io.github.vananos.sosedi.models.dto.ad.AdRequest;
 import io.github.vananos.sosedi.models.dto.ad.AdResponse;
-import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
+import io.github.vananos.sosedi.models.dto.BaseResponse;
 import io.github.vananos.sosedi.service.AdService;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.ResponseEntity;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import io.github.vananos.sosedi.models.*;
 import io.github.vananos.sosedi.models.dto.ad.AdRequest;
 import io.github.vananos.sosedi.models.dto.ad.AdResponse;
-import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
+import io.github.vananos.sosedi.models.dto.BaseResponse;
 import io.github.vananos.sosedi.security.UserDetailsImpl;
 import io.github.vananos.sosedi.service.AdService;
 import org.junit.jupiter.api.Test;

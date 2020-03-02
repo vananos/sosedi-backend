@@ -2,8 +2,8 @@ package io.github.vananos.sosedi.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.vananos.sosedi.models.dto.feedback.FeedbackRequest;
-import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
-import io.github.vananos.sosedi.models.dto.registration.Error;
+import io.github.vananos.sosedi.models.dto.BaseResponse;
+import io.github.vananos.sosedi.models.dto.Error;
 import io.github.vananos.sosedi.service.EmailService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

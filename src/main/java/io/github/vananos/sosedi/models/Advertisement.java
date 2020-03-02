@@ -24,7 +24,7 @@ public class Advertisement {
     @Column(name = "LANDLORD")
     private Boolean landlord;
 
-    @Column(name = "PLACE_ID", columnDefinition = "jsonb")
+    @Column(name = "PLACE_ID", columnDefinition = "TEXT")
     @Convert(converter = GeoInfoConverter.class)
     private GeoInfo placeId;
 
@@ -42,11 +42,11 @@ public class Advertisement {
     @Column(name = "MAX_AGE")
     private Integer maxAge;
 
-    @Column(name = "ROOM_TYPE", columnDefinition = "jsonb")
+    @Column(name = "ROOM_TYPE", columnDefinition = "TEXT")
     @Convert(converter = RoomTypeListConverter.class)
     private List<RoomType> roomType;
 
-    @Column(name = "CONVENIENCES", columnDefinition = "jsonb")
+    @Column(name = "CONVENIENCES", columnDefinition = "TEXT")
     @Convert(converter = ConvenienceListConverter.class)
     private List<Convenience> conveniences;
 

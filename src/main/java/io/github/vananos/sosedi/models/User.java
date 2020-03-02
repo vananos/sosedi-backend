@@ -2,6 +2,7 @@ package io.github.vananos.sosedi.models;
 
 import io.github.vananos.sosedi.components.converters.InterestListConverter;
 import lombok.Data;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.time.LocalDate;
@@ -9,6 +10,7 @@ import java.util.List;
 
 @Data
 @Entity
+@Accessors(chain = true)
 @Table(name = "USERS")
 public class User {
 
@@ -30,7 +32,7 @@ public class User {
     private String surname;
 
     @Column(name = "PINCODE", nullable = false)
-    private String pincode;
+    private String pinCode;
 
     @Column(name = "BIRTHDAY")
     private LocalDate birthday;
@@ -38,7 +40,7 @@ public class User {
     @Column(name = "PHONE")
     private String phone;
 
-    @Column(name = "INTERESTS", columnDefinition = "jsonb")
+    @Column(name = "INTERESTS", columnDefinition = "TEXT")
     @Convert(converter = InterestListConverter.class)
     private List<Interests> interests;
 

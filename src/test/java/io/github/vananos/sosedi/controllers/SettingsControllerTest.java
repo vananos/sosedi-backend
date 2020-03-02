@@ -69,7 +69,7 @@ public class SettingsControllerTest {
 
         verify(userRepository, times(1)).save(argumentCaptor.capture());
 
-        assertThat(argumentCaptor.getValue().getPincode()).isEqualTo("encoded_pass");
+        assertThat(argumentCaptor.getValue().getPinCode()).isEqualTo("encoded_pass");
     }
 
 

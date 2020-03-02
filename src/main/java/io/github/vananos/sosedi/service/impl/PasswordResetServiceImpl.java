@@ -11,8 +11,6 @@ import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
-import static io.github.vananos.sosedi.Utils.getRandomPincode;
-
 @Service
 public class PasswordResetServiceImpl implements PasswordResetService {
 
@@ -29,8 +27,7 @@ public class PasswordResetServiceImpl implements PasswordResetService {
                                     EmailService emailService,
                                     TaskExecutor taskExecutor,
                                     TemplateEngine templateEngine,
-                                    PasswordEncoder passwordEncoder)
-    {
+                                    PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.emailService = emailService;
         this.taskExecutor = taskExecutor;
@@ -40,8 +37,8 @@ public class PasswordResetServiceImpl implements PasswordResetService {
 
     @Override
     public void startPasswordResetForUser(User user) {
-        String newPincode = getRandomPincode();
-        user.setPincode(passwordEncoder.encode(newPincode));
+        String newPincode = null;
+        user.setPinCode(passwordEncoder.encode(newPincode));
         userService.updateUserInfo(user);
         sendPasswordRestoreLetter(user, newPincode);
     }

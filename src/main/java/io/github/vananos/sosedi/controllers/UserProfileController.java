@@ -2,7 +2,7 @@ package io.github.vananos.sosedi.controllers;
 
 import io.github.vananos.sosedi.models.User;
 import io.github.vananos.sosedi.models.User.UserStatus;
-import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
+import io.github.vananos.sosedi.models.dto.BaseResponse;
 import io.github.vananos.sosedi.models.dto.userprofile.UserProfileInfo;
 import io.github.vananos.sosedi.service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -42,8 +42,7 @@ public class UserProfileController {
     @PreAuthorize("hasPermission(#userProfileInfo, 'write')")
     public ResponseEntity<BaseResponse> updateUserProfile(
             @RequestBody @Valid UserProfileInfo userProfileInfo,
-            BindingResult bindingResult)
-    {
+            BindingResult bindingResult) {
 
         assertHasNoErrors(bindingResult);
         User user = userService.findUserById(userProfileInfo.getId());

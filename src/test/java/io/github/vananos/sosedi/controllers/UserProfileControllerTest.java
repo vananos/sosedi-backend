@@ -164,7 +164,7 @@ public class UserProfileControllerTest {
     private User getUser() {
         User user = new User();
         user.setName("testUser");
-        user.setPincode("pass");
+        user.setPinCode("pass");
         user.setId(1L);
         user.setUserStatus(User.UserStatus.EMAIL_CONFIRMED);
         return user;

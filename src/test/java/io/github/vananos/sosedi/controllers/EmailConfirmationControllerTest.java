@@ -1,63 +1,80 @@
 package io.github.vananos.sosedi.controllers;
 
-import io.github.vananos.sosedi.models.User;
-import io.github.vananos.sosedi.service.UserConfirmationService;
+import io.github.vananos.sosedi.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.eq;
+import static io.github.vananos.sosedi.utils.Constants.VALID_USERNAME;
+import static io.github.vananos.sosedi.utils.UserBag.getUser;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-@WithMockUser
+@ExtendWith(MockitoExtension.class)
 public class EmailConfirmationControllerTest {
+    private static final String EXISTING_CONFIRMATION_ID = "existingConfirmationId";
+    private static final String NONEXISTENT_CONFIRMATION_ID = "nonExistentConfirmationId";
 
-    public static final String EMAIL_CONFIRMATION_URL = "/confirmation/confirmationCode";
+    @Mock
+    private UserService userServiceMock;
 
-    @MockBean
-    private UserConfirmationService userConfirmationService;
+    @Mock
+    private HttpServletResponse httpServletResponseMock;
 
-    @Autowired
-    private MockMvc mvc;
+    private EmailConfirmationController emailConfirmationController;
 
-    @Test
-    public void emailConfirmation_success() throws Exception {
-        User expectedUser = new User();
-        expectedUser.setName("test");
-        when(userConfirmationService.confirmEmail(eq("confirmationCode"))).thenReturn(Optional.of(expectedUser));
-
-        mvc.perform(MockMvcRequestBuilders.get(EMAIL_CONFIRMATION_URL))
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/confirmhandler?status=confirmed&username=" + URLEncoder.encode(expectedUser.getName(),
-                        StandardCharsets.UTF_8.toString()
-                )));
+    @BeforeEach
+    public void setUp() {
+        emailConfirmationController = new EmailConfirmationController(userServiceMock);
     }
 
+    @Test
+    public void confirmEmail_shouldRedirectToConfirmationHandlerWithConfirmedStatus_whenConfirmationWasSuccessful() throws IOException {
+        //given
+        when(userServiceMock.confirmEmail(EXISTING_CONFIRMATION_ID)).thenReturn(Optional.of(getUser()));
+        //and
+        String expectedRedirectPath = "/confirmationhandler?status=confirmed&username=" + URLEncoder.encode(VALID_USERNAME, UTF_8.toString());
+        //when
+        emailConfirmationController.confirmEmail(EXISTING_CONFIRMATION_ID, httpServletResponseMock);
+        //then
+        verify(httpServletResponseMock).sendRedirect(expectedRedirectPath);
+    }
 
     @Test
-    public void emailConfirmation_notExistingConfirmationId() throws Exception {
-        User expectedUser = new User();
-        expectedUser.setName("test");
-        when(userConfirmationService.confirmEmail(eq("confirmationCode"))).thenReturn(Optional.empty());
+    public void confirmEmail_shouldRedirectToConfirmationHandlerWithErrorStatus_whenConfirmationWasUnsuccessful() throws IOException {
+        //given
+        when(userServiceMock.confirmEmail(NONEXISTENT_CONFIRMATION_ID)).thenReturn(Optional.empty());
+        //when
+        emailConfirmationController.confirmEmail(NONEXISTENT_CONFIRMATION_ID, httpServletResponseMock);
+        //then
+        verify(httpServletResponseMock).sendRedirect("/confirmationhandler?status=error");
+    }
 
-        mvc.perform(MockMvcRequestBuilders.get(EMAIL_CONFIRMATION_URL))
-                .andExpect(status().isFound())
-                .andExpect(redirectedUrl("/confirmhandler?status=error"));
+    @Test
+    public void cancelEmailConfirmation_shouldRedirectToConfirmationHandlerWithCancelledStatus_whenCancellationSucceed() throws IOException {
+        //given
+        when(userServiceMock.cancelConfirmation(EXISTING_CONFIRMATION_ID)).thenReturn(true);
+        //when
+        emailConfirmationController.canclerEmailConfirmation(EXISTING_CONFIRMATION_ID, httpServletResponseMock);
+        //then
+        verify(httpServletResponseMock).sendRedirect("/confirmationhandler?status=cancelled");
+    }
+
+    @Test
+    public void cancelEmailConfirmation_shouldRedirectToConfirmationHandlerWithErrorStatus_whenCancellationWasUnsuccessful() throws IOException {
+        //given
+        when(userServiceMock.cancelConfirmation(NONEXISTENT_CONFIRMATION_ID)).thenReturn(false);
+        //when
+        emailConfirmationController.canclerEmailConfirmation(NONEXISTENT_CONFIRMATION_ID, httpServletResponseMock);
+        //then
+        verify(httpServletResponseMock).sendRedirect("/confirmationhandler?status=error");
     }
 }

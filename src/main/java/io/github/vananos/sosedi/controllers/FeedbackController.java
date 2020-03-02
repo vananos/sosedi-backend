@@ -1,7 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
 import io.github.vananos.sosedi.models.dto.feedback.FeedbackRequest;
-import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
+import io.github.vananos.sosedi.models.dto.BaseResponse;
 import io.github.vananos.sosedi.service.FeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

@@ -1,6 +1,6 @@
 package io.github.vananos.sosedi.exceptions;
 
-import io.github.vananos.sosedi.models.dto.registration.Error;
+import io.github.vananos.sosedi.models.dto.Error;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 

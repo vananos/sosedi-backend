@@ -1,15 +1,14 @@
-package io.github.vananos.sosedi.models.dto.registration;
+package io.github.vananos.sosedi.models.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.experimental.Accessors;
+import lombok.Builder;
+import lombok.Value;
 
 import java.util.List;
 
-@Data
-@Accessors(fluent = true)
-public class BaseResponse<T> {
-
+@Value
+@Builder
+public class BaseResponse2<T> {
     @JsonProperty("errors")
     private List<Error> errors;
 

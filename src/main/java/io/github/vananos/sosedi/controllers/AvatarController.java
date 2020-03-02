@@ -1,7 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
 import io.github.vananos.sosedi.models.User;
-import io.github.vananos.sosedi.models.dto.registration.BaseResponse;
+import io.github.vananos.sosedi.models.dto.BaseResponse;
 import io.github.vananos.sosedi.service.FileService;
 import io.github.vananos.sosedi.service.UserService;
 import lombok.extern.slf4j.Slf4j;

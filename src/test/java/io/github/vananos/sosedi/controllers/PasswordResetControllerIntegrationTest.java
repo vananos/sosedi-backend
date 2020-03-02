@@ -19,7 +19,6 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static io.github.vananos.Utils.getValidUser;
 import static io.github.vananos.Utils.toJson;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -72,7 +71,7 @@ public class PasswordResetControllerIntegrationTest {
                 .andExpect(status().isOk());
 
         User expectedUser = getValidUser();
-        expectedUser.setPincode("NEWPASSWORD_ENCODED");
+        expectedUser.setPinCode("NEWPASSWORD_ENCODED");
 
         verify(userService, times(1)).updateUserInfo(eq(expectedUser));
     }

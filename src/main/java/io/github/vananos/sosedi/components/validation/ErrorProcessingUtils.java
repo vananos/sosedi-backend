@@ -1,7 +1,7 @@
 package io.github.vananos.sosedi.components.validation;
 
 import io.github.vananos.sosedi.exceptions.BadParametersException;
-import io.github.vananos.sosedi.models.dto.registration.Error;
+import io.github.vananos.sosedi.models.dto.Error;
 import org.springframework.validation.BindingResult;
 
 import java.util.List;

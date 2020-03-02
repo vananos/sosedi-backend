@@ -1,128 +1,84 @@
 package io.github.vananos.sosedi.controllers;
 
+import io.github.vananos.sosedi.components.validation.RequestValidator;
+import io.github.vananos.sosedi.exceptions.BadParametersException;
 import io.github.vananos.sosedi.exceptions.UserAlreadyExistsException;
-import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.RegistrationInfo;
+import io.github.vananos.sosedi.models.dto.BaseResponse2;
 import io.github.vananos.sosedi.models.dto.registration.RegistrationRequest;
 import io.github.vananos.sosedi.service.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.Matchers;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 
-import java.util.stream.Stream;
-
-import static io.github.vananos.Utils.toJson;
-import static io.github.vananos.sosedi.controllers.RegistrationController.USER_ALREADY_EXISTS;
-import static org.hamcrest.core.Is.is;
-import static org.mockito.ArgumentMatchers.any;
+import static io.github.vananos.sosedi.utils.RegistrationRequestBag.getRegistrationRequest;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
-@AutoConfigureMockMvc
-@WithMockUser
+@ExtendWith(MockitoExtension.class)
 public class RegistrationControllerTest {
-    private static final String REGISTRATION_ENDPOINT = "/register";
 
-    @Autowired
-    private MockMvc mvc;
+    @Mock
+    private UserService userServiceMock;
 
-    @MockBean
-    private UserService userService;
+    @Mock
+    private RequestValidator requestValidatorMock;
 
+    private RegistrationController registrationController;
 
-    @Test
-    public void register_userRegisteredSuccessfully() throws Exception {
-        doNothing().when(userService).registerUser(any(User.class));
-
-        RegistrationRequest validUserRegistrationRequest = validUserRegistrationRequest();
-
-        mvc.perform(
-                registrationPost()
-                        .content(toJson(validUserRegistrationRequest)))
-                .andExpect(status().isOk());
-
-        User userRegistrationInfo = new User();
-        userRegistrationInfo.setName(validUserRegistrationRequest.getName());
-        userRegistrationInfo.setSurname(validUserRegistrationRequest.getSurname());
-        userRegistrationInfo.setPincode(validUserRegistrationRequest.getPassword());
-        userRegistrationInfo.setEmail(validUserRegistrationRequest.getEmail());
-
-        verify(userService, times(1)).registerUser(Matchers.eq(userRegistrationInfo));
+    @BeforeEach
+    public void setUp() {
+        registrationController = new RegistrationController(userServiceMock, requestValidatorMock);
     }
 
     @Test
-    public void register_userAlreadyExists() throws Exception {
-        doThrow(new UserAlreadyExistsException()).when(userService).registerUser(any(User.class));
-
-        mvc.perform(
-                registrationPost()
-                        .content(toJson(validUserRegistrationRequest())))
-
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0].description", is(USER_ALREADY_EXISTS)));
+    public void register_shouldRegisterUserWhenValidInfoProvided() {
+        //given
+        RegistrationRequest validRegistrationRequest = getRegistrationRequest().build();
+        //and
+        BindingResult bindingResultWithoutErrors = mock(BindingResult.class);
+        //and
+        ResponseEntity<BaseResponse2> expectedResult = ResponseEntity.ok(BaseResponse2.builder().build());
+        //when
+        ResponseEntity<BaseResponse2> actualResult = registrationController.register(validRegistrationRequest, bindingResultWithoutErrors);
+        //then
+        assertThat(actualResult).isEqualTo(expectedResult);
+        //and
+        verify(requestValidatorMock).assertValid(bindingResultWithoutErrors);
+        verifyNoMoreInteractions(requestValidatorMock);
+        //and
+        verify(userServiceMock).registerUser(RegistrationInfo.builder()
+                .name(validRegistrationRequest.getName())
+                .surname(validRegistrationRequest.getSurname())
+                .email(validRegistrationRequest.getEmail())
+                .build());
+        verifyNoMoreInteractions(userServiceMock);
     }
 
-    @ParameterizedTest
-    @MethodSource("provideValidationErrorsArguments")
-    public void register_validationErrors(RegistrationRequest registrationRequest, String errorId) throws Exception {
-        mvc.perform(
-                registrationPost()
-                        .content(toJson(registrationRequest)))
-
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.errors[0].id", is(errorId)));
-
-        verify(userService, never()).registerUser(any());
+    @Test
+    public void register_shouldRethrowExceptionFromRequestValidator() {
+        //given
+        doThrow(new BadParametersException()).when(requestValidatorMock).assertValid(any());
+        //then
+        assertThrows(BadParametersException.class, () -> {
+            registrationController.register(getRegistrationRequest().build(), mock(BindingResult.class));
+        });
+        //and
+        verifyZeroInteractions(userServiceMock);
     }
 
-    public static Stream<Arguments> provideValidationErrorsArguments() {
-        RegistrationRequest withInvalidName = validUserRegistrationRequest();
-        withInvalidName.setName("_");
-
-        RegistrationRequest withInvalidSurname = validUserRegistrationRequest();
-        withInvalidSurname.setSurname("_");
-
-        RegistrationRequest withInvalidEmail = validUserRegistrationRequest();
-        withInvalidEmail.setEmail("invalidEmail.com");
-
-        RegistrationRequest withWeakPassword = validUserRegistrationRequest();
-        withWeakPassword.setPassword("weakPassword");
-
-        return Stream.of(
-                Arguments.of(withInvalidName, "name"),
-                Arguments.of(withInvalidSurname, "surname"),
-                Arguments.of(withInvalidEmail, "email"),
-                Arguments.of(withWeakPassword, "pincode")
-        );
-    }
-
-    private MockHttpServletRequestBuilder registrationPost() {
-        return post(REGISTRATION_ENDPOINT)
-                .contentType(MediaType.APPLICATION_JSON)
-                .characterEncoding("utf-8");
-    }
-
-    private static RegistrationRequest validUserRegistrationRequest() {
-        RegistrationRequest registrationRequest = new RegistrationRequest();
-        registrationRequest.setEmail("test@gmail.com");
-        registrationRequest.setPassword("VeryStrongPassword_130");
-        registrationRequest.setName("username");
-        registrationRequest.setSurname("usersurname");
-        return registrationRequest;
+    @Test
+    public void register_shouldRethrowExceptionFromUserServiceWhenUserAlreadyExists() {
+        //given
+        doThrow(new UserAlreadyExistsException()).when(userServiceMock).registerUser(any());
+        //then
+        assertThrows(UserAlreadyExistsException.class, () -> {
+            registrationController.register(getRegistrationRequest().build(), mock(BindingResult.class));
+        });
     }
 }
