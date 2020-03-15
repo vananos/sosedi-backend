@@ -2,17 +2,17 @@ package io.github.vananos.sosedi.service.impl;
 
 import io.github.vananos.sosedi.exceptions.UserAlreadyExistsException;
 import io.github.vananos.sosedi.exceptions.UserNotFoundException;
-import io.github.vananos.sosedi.models.EmailConfirmationInfo;
 import io.github.vananos.sosedi.models.Notifications;
 import io.github.vananos.sosedi.models.RegistrationInfo;
 import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.events.NewPinCodeRequestedEvent;
+import io.github.vananos.sosedi.models.events.UserRegisteredEvent;
 import io.github.vananos.sosedi.repository.UserRepository;
-import io.github.vananos.sosedi.service.EmailService;
-import io.github.vananos.sosedi.service.MatchService;
 import io.github.vananos.sosedi.service.UserService;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -30,18 +30,15 @@ import static io.github.vananos.sosedi.models.User.UserStatus.EMAIL_UNCONFIRMED;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    private final MatchService matchService;
-    private final EmailService emailService;
+    private final ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     public UserServiceImpl(@NonNull UserRepository userRepository,
                            @NonNull PasswordEncoder passwordEncoder,
-                           @NonNull MatchService matchService,
-                           @NonNull EmailService emailService) {
+                           @NonNull ApplicationEventPublisher applicationEventPublisher) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
-        this.matchService = matchService;
-        this.emailService = emailService;
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
 
@@ -50,7 +47,7 @@ public class UserServiceImpl implements UserService {
         Notifications notifications = new Notifications();
         notifications.setNotificationFrequency(ONE_DAY);
 
-        String pinCode = String.format("%04d", ThreadLocalRandom.current().nextInt(0, 9999));
+        String pinCode = generatePinCode();
         String confirmationId = UUID.randomUUID().toString();
 
         User user = new User()
@@ -61,7 +58,7 @@ public class UserServiceImpl implements UserService {
                 .setEmail(registrationInfo.getEmail())
                 .setNotifications(notifications);
 
-        EmailConfirmationInfo emailConfirmationInfo = EmailConfirmationInfo.builder()
+        UserRegisteredEvent userRegisteredEvent = UserRegisteredEvent.builder()
                 .username(registrationInfo.getName())
                 .email(registrationInfo.getEmail())
                 .emailConfirmationId(confirmationId)
@@ -70,7 +67,7 @@ public class UserServiceImpl implements UserService {
         try {
             userRepository.save(user);
             log.info("User is registered: {}", registrationInfo);
-            emailService.sendEmailConfirmationLetter(emailConfirmationInfo);
+            applicationEventPublisher.publishEvent(userRegisteredEvent);
         } catch (DataIntegrityViolationException e) {
             log.debug("User with email: {} is already exists", registrationInfo.getEmail());
             throw new UserAlreadyExistsException();
@@ -81,7 +78,7 @@ public class UserServiceImpl implements UserService {
     public User updateUserInfo(User user) {
         user = userRepository.save(user);
         if (user.getUserStatus() == User.UserStatus.AD_FILLED) {
-            matchService.updateMatchesForUser(user);
+//            matchService.updateMatchesForUser(user);
         }
         return user;
     }
@@ -138,5 +135,28 @@ public class UserServiceImpl implements UserService {
         userRepository.delete(user);
         log.info("User {} cancelled email confirmation", user);
         return true;
+    }
+
+    @Override
+    public boolean requestNewPinCodeFor(@NonNull String email) {
+        User user = userRepository.getUserByEmail(email);
+        if (user == null) {
+            return false;
+        }
+        String newPinCode = generatePinCode();
+        user.setPinCode(passwordEncoder.encode(newPinCode));
+        userRepository.save(user);
+        log.info("PinCode for userId: {} was updated", user.getId());
+        applicationEventPublisher.publishEvent(
+                NewPinCodeRequestedEvent.builder()
+                        .email(email)
+                        .pinCode(newPinCode)
+                        .username(user.getName())
+                        .build());
+        return true;
+    }
+
+    private String generatePinCode() {
+        return String.format("%04d", ThreadLocalRandom.current().nextInt(0, 9999));
     }
 }

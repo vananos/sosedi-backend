@@ -1,12 +1,13 @@
-package io.github.vananos.sosedi.service;
+package io.github.vananos.sosedi.service.impl;
 
 import io.github.vananos.sosedi.exceptions.UserAlreadyExistsException;
 import io.github.vananos.sosedi.exceptions.UserNotFoundException;
-import io.github.vananos.sosedi.models.EmailConfirmationInfo;
 import io.github.vananos.sosedi.models.RegistrationInfo;
 import io.github.vananos.sosedi.models.User;
+import io.github.vananos.sosedi.models.events.NewPinCodeRequestedEvent;
+import io.github.vananos.sosedi.models.events.UserRegisteredEvent;
 import io.github.vananos.sosedi.repository.UserRepository;
-import io.github.vananos.sosedi.service.impl.UserServiceImpl;
+import io.github.vananos.sosedi.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -31,8 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-public class UserServiceTest {
-    private static final String CONFIRMATION_LETTER = "confirmation letter";
+public class UserServiceImplTest {
     private static final String EXISTING_CONFIRMATION_ID = "existingConfirmationId";
     private static final String NONEXISTENT_CONFIRMATION_ID = "nonExistentConfirmationId";
 
@@ -41,15 +42,13 @@ public class UserServiceTest {
     @Mock
     private PasswordEncoder passwordEncoderMock;
     @Mock
-    private MatchService matchServiceMock;
-    @Mock
-    private EmailService emailServiceMock;
+    private ApplicationEventPublisher applicationEventPublisher;
 
     private UserService userService;
 
     @BeforeEach
     public void setUp() {
-        userService = new UserServiceImpl(userRepositoryMock, passwordEncoderMock, matchServiceMock, emailServiceMock);
+        userService = new UserServiceImpl(userRepositoryMock, passwordEncoderMock, applicationEventPublisher);
     }
 
     @Test
@@ -79,14 +78,14 @@ public class UserServiceTest {
         assertThat(savedUser).isEqualToIgnoringNullFields(expectedUser);
         assertThat(savedUser.getEmailConfirmationId()).isNotEmpty();
         //and
-        EmailConfirmationInfo expectedEmailConfirmationInfo = EmailConfirmationInfo.builder()
+        UserRegisteredEvent expectedUserRegisteredEvent = UserRegisteredEvent.builder()
                 .username(VALID_USERNAME)
                 .email(VALID_EMAIL)
                 .pinCode(pinCodeArgumentCaptor.getValue())
                 .emailConfirmationId(savedUser.getEmailConfirmationId())
                 .build();
-        verify(emailServiceMock).sendEmailConfirmationLetter(expectedEmailConfirmationInfo);
-        verifyNoMoreInteractions(emailServiceMock);
+        verify(applicationEventPublisher).publishEvent(expectedUserRegisteredEvent);
+        verifyNoMoreInteractions(applicationEventPublisher);
     }
 
     @Test
@@ -99,7 +98,7 @@ public class UserServiceTest {
         });
         //and
         verifyZeroInteractions(userRepositoryMock);
-        verifyZeroInteractions(emailServiceMock);
+        verifyZeroInteractions(applicationEventPublisher);
     }
 
     @Test
@@ -176,5 +175,46 @@ public class UserServiceTest {
         assertThat(result).isFalse();
         //and
         verifyZeroInteractions(userRepositoryMock);
+    }
+
+    @Test
+    public void requestNewPinCodeFor_shouldUpdatePinCodeAndSendLetterWithNewPinCode_whenUserFoundByEmail() {
+        //given
+        when(userRepositoryMock.getUserByEmail(VALID_EMAIL)).thenReturn(getUser());
+        //and
+        String newEncodedPinCode = "newEncodedPinCode";
+        //and
+        when(passwordEncoderMock.encode(any())).thenReturn(newEncodedPinCode);
+        //when
+        boolean wasSuccessful = userService.requestNewPinCodeFor(VALID_EMAIL);
+        //then
+        assertThat(wasSuccessful).isTrue();
+        //and
+        verify(userRepositoryMock).save(getUser().setPinCode(newEncodedPinCode));
+        verifyNoMoreInteractions(userRepositoryMock);
+        //and
+        ArgumentCaptor<String> newPinCodeCaptor = ArgumentCaptor.forClass(String.class);
+        verify(passwordEncoderMock).encode(newPinCodeCaptor.capture());
+        //and
+        verify(applicationEventPublisher).publishEvent(NewPinCodeRequestedEvent.builder()
+                .email(VALID_EMAIL)
+                .username(VALID_USERNAME)
+                .pinCode(newPinCodeCaptor.getValue())
+                .build());
+        verifyNoMoreInteractions(applicationEventPublisher);
+    }
+
+    @Test
+    public void requestNewPinCodeFor_shouldDoNothing_whenUserNotFound() {
+        //given
+        when(userRepositoryMock.getUserByEmail(VALID_EMAIL)).thenReturn(null);
+        //when
+        boolean wasSuccessful = userService.requestNewPinCodeFor(VALID_EMAIL);
+        //then
+        assertThat(wasSuccessful).isFalse();
+        //and
+        verifyZeroInteractions(userRepositoryMock);
+        //and
+        verifyZeroInteractions(applicationEventPublisher);
     }
 }

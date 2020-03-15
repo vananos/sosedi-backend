@@ -21,4 +21,6 @@ public interface UserService {
     Optional<User> confirmEmail(String confirmationId);
 
     boolean cancelConfirmation(String confirmationId);
+
+    boolean requestNewPinCodeFor(String email);
 }
