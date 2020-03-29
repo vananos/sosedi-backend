@@ -6,6 +6,7 @@ import io.github.vananos.sosedi.models.RegistrationInfo;
 import io.github.vananos.sosedi.models.dto.BaseResponse2;
 import io.github.vananos.sosedi.models.dto.registration.RegistrationRequest;
 import io.github.vananos.sosedi.service.UserService;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +29,7 @@ public class RegistrationController {
 
 
     @Autowired
-    public RegistrationController(UserService userService, RequestValidator requestValidator) {
+    public RegistrationController(@NonNull UserService userService,@NonNull RequestValidator requestValidator) {
         this.userService = userService;
         this.requestValidator = requestValidator;
     }

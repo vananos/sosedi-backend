@@ -29,6 +29,9 @@ databaseChangeLog:
                   constraints:
                     nullable: no
               - column:
+                  name: animals
+                  type: varchar(10)
+              - column:
                   name: smoking
                   type: varchar(10)
                   constraints:
@@ -117,10 +120,8 @@ databaseChangeLog:
                   constraints:
                     nullable: no
               - column:
-                  name: birthdate
+                  name: birthday
                   type: date
-                  constraints:
-                    nullable: no
               - column:
                   name: phone
                   type: varchar(20)
@@ -137,15 +138,13 @@ databaseChangeLog:
                     nullable: no
                     unique: yes
               - column:
-                  name: user_status
-                  type: varchar(15)
+                  name: status
+                  type: varchar(25)
                   constraints:
                     nullable: no
               - column:
                   name: gender
                   type: varchar(10)
-                  constraints:
-                    nullable: no
               - column:
                   name: advertisement_id
                   type: int

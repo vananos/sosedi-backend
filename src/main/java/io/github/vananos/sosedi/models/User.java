@@ -44,7 +44,7 @@ public class User {
     @Convert(converter = InterestListConverter.class)
     private List<Interests> interests;
 
-    @Column(name = "description")
+    @Column(name = "DESCRIPTION")
     private String description;
 
     @Column(name = "EMAIL_CONFIRMATION_ID", unique = true)

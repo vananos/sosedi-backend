@@ -1,6 +1,7 @@
 package io.github.vananos.sosedi.controllers;
 
 import io.github.vananos.sosedi.service.UserService;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,7 +14,7 @@ public class PinCodeRecoveryController {
 
     private final UserService userService;
 
-    public PinCodeRecoveryController(UserService userService) {
+    public PinCodeRecoveryController(@NonNull UserService userService) {
         this.userService = userService;
     }
 

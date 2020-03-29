@@ -19,7 +19,7 @@ public class SosediConfiguration {
         return new BCryptPasswordEncoder(10);
     }
 
-    @Bean
+    @Bean(name = "taskExecutor")
     public Executor threadPoolTaskExecutor() {
         return new ThreadPoolTaskExecutor();
     }

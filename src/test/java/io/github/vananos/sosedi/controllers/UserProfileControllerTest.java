@@ -76,7 +76,7 @@ public class UserProfileControllerTest {
 
     @Test
     public void postValidUpdateInfo_profileUpdated() throws Exception {
-        when(userService.findUserById(any())).thenReturn(getValidUser());
+        when(userService.findUserById(anyLong())).thenReturn(getValidUser());
         when(userService.updateUserInfo(any())).thenReturn(null);
 
         mvc.perform(updatePost().content(toJson(getValidUserProfileInfoRequest())))
@@ -92,7 +92,7 @@ public class UserProfileControllerTest {
 
     @Test
     public void postUnExistingUserProfileUpdate_notFoundResponse() throws Exception {
-        when(userService.findUserById(any())).thenThrow(new UserNotFoundException());
+        when(userService.findUserById(anyLong())).thenThrow(new UserNotFoundException());
         mvc.perform(updatePost().content(toJson(getValidUserProfileInfoRequest())))
                 .andExpect(status().isNotFound());
     }

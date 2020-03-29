@@ -41,7 +41,7 @@ public class EmailConfirmationControllerTest {
         //given
         when(userServiceMock.confirmEmail(EXISTING_CONFIRMATION_ID)).thenReturn(Optional.of(getUser()));
         //and
-        String expectedRedirectPath = "/confirmationhandler?status=confirmed&username=" + URLEncoder.encode(VALID_USERNAME, UTF_8.toString());
+        String expectedRedirectPath = "../confirmationhandler?status=confirmed&username=" + URLEncoder.encode(VALID_USERNAME, UTF_8.toString());
         //when
         emailConfirmationController.confirmEmail(EXISTING_CONFIRMATION_ID, httpServletResponseMock);
         //then
@@ -55,7 +55,7 @@ public class EmailConfirmationControllerTest {
         //when
         emailConfirmationController.confirmEmail(NONEXISTENT_CONFIRMATION_ID, httpServletResponseMock);
         //then
-        verify(httpServletResponseMock).sendRedirect("/confirmationhandler?status=error");
+        verify(httpServletResponseMock).sendRedirect("../confirmationhandler?status=error");
     }
 
     @Test
@@ -65,7 +65,7 @@ public class EmailConfirmationControllerTest {
         //when
         emailConfirmationController.canclerEmailConfirmation(EXISTING_CONFIRMATION_ID, httpServletResponseMock);
         //then
-        verify(httpServletResponseMock).sendRedirect("/confirmationhandler?status=cancelled");
+        verify(httpServletResponseMock).sendRedirect("../confirmationhandler?status=cancelled");
     }
 
     @Test
@@ -75,6 +75,6 @@ public class EmailConfirmationControllerTest {
         //when
         emailConfirmationController.canclerEmailConfirmation(NONEXISTENT_CONFIRMATION_ID, httpServletResponseMock);
         //then
-        verify(httpServletResponseMock).sendRedirect("/confirmationhandler?status=error");
+        verify(httpServletResponseMock).sendRedirect("../confirmationhandler?status=error");
     }
 }

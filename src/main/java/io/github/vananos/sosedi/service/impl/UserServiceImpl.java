@@ -2,6 +2,7 @@ package io.github.vananos.sosedi.service.impl;
 
 import io.github.vananos.sosedi.exceptions.UserAlreadyExistsException;
 import io.github.vananos.sosedi.exceptions.UserNotFoundException;
+import io.github.vananos.sosedi.models.NotificationFrequency;
 import io.github.vananos.sosedi.models.Notifications;
 import io.github.vananos.sosedi.models.RegistrationInfo;
 import io.github.vananos.sosedi.models.User;
@@ -84,20 +85,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public User findUserById(Long id) {
+    public User findUserById(long id) {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+    }
+
+    @Override
+    public void setNotificationFrequencyForUser(long userId, NotificationFrequency notificationFrequency) {
+        User user = findUserById(userId);
+        user.getNotifications().setNotificationFrequency(notificationFrequency);
+        userRepository.save(user);
     }
 
     @Override
     public void setAvatarForUser(String avatar, Long userId) {
         userRepository.updateAvatarForUser(avatar, userId);
-    }
-
-    @Override
-    public void updateUserPassword(Long userId, String password) {
-        User user = findUserById(userId);
-        user.setPinCode(passwordEncoder.encode(password));
-        updateUserInfo(user);
     }
 
     @Override

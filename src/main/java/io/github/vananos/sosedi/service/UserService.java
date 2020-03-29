@@ -1,5 +1,6 @@
 package io.github.vananos.sosedi.service;
 
+import io.github.vananos.sosedi.models.NotificationFrequency;
 import io.github.vananos.sosedi.models.RegistrationInfo;
 import io.github.vananos.sosedi.models.User;
 
@@ -10,11 +11,11 @@ public interface UserService {
 
     User updateUserInfo(User user);
 
-    User findUserById(Long id);
+    User findUserById(long id);
+
+    void setNotificationFrequencyForUser(long userId, NotificationFrequency notificationFrequency);
 
     void setAvatarForUser(String avatar, Long userId);
-
-    void updateUserPassword(Long userId, String password);
 
     void deleteAccount(Long userId);
 

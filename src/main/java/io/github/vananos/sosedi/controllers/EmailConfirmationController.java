@@ -28,7 +28,7 @@ public class EmailConfirmationController {
                 .map(user -> "?status=confirmed&username=" + user.getName())
                 .orElse("?status=error");
 
-        String redirectPath = "/confirmationhandler" + confirmationPath;
+        String redirectPath = "../confirmationhandler" + confirmationPath;
         response.sendRedirect(redirectPath);
     }
 
@@ -38,6 +38,6 @@ public class EmailConfirmationController {
 
         boolean wasSuccessful = userService.cancelConfirmation(confirmationId);
 
-        response.sendRedirect("/confirmationhandler?status=" + (wasSuccessful ? "cancelled" : "error"));
+        response.sendRedirect("../confirmationhandler?status=" + (wasSuccessful ? "cancelled" : "error"));
     }
 }
